@@ -16,9 +16,6 @@ public class Ray {
      * @throws IllegalArgumentException If the direction vector is a zero vector.
      */
     public Ray(Point head, Vector direction) {
-        if (direction.equals(Vector.ZERO)) {
-            throw new IllegalArgumentException("The direction vector cannot be a zero vector.");
-        }
         this.head = head;
         this.direction = direction.normalize();
     }

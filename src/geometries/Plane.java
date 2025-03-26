@@ -11,7 +11,7 @@ public class Plane extends Geometry {
     /**
      * A reference point on the plane.
      */
-    private final Point q0;
+    private final Point q;
 
     /**
      * The normal vector of the plane.
@@ -27,7 +27,7 @@ public class Plane extends Geometry {
      * @param v2 the third point
      */
     public Plane(Point v0, Point v1, Point v2) {
-        this.q0 = v0;
+        this.q = v0;
         this.normal = null; // The normal will be calculated in the next stage
     }
 
@@ -35,11 +35,11 @@ public class Plane extends Geometry {
      * Constructs a plane using a reference point and a normal vector.
      * The normal vector is normalized before storing.
      *
-     * @param q0    a reference point on the plane
+     * @param q    a reference point on the plane
      * @param normal the normal vector of the plane (may not be normalized, but will be stored normalized)
      */
-    public Plane(Point q0, Vector normal) {
-        this.q0 = q0;
+    public Plane(Point q, Vector normal) {
+        this.q = q;
         this.normal = normal.normalize(); // Ensure the normal is stored as a normalized vector
     }
 
