@@ -65,5 +65,33 @@ class PlaneTest {
 
     @Test
     void testGetNormal() {
+        // ============ Equivalence Partitions Tests ==============
+
+        // TC01: Creating a plane with three non-collinear points and checking the normal
+        Point p1 = new Point(0, 0, 0);
+        Point p2 = new Point(1, 0, 0);
+        Point p3 = new Point(0, 1, 0);
+
+        Plane plane = new Plane(p1, p2, p3);
+        Vector normal = plane.getNormal(p1);
+
+        // Check that the normal is perpendicular to both vectors formed by the points
+        Vector v1 = p2.subtract(p1);
+        Vector v2 = p3.subtract(p1);
+        assertEquals(0, normal.dotProduct(v1), "TC01: Normal is not perpendicular to v1");
+        assertEquals(0, normal.dotProduct(v2), "TC01: Normal is not perpendicular to v2");
+
+        // Check that the normal is a unit vector
+        assertEquals(1, normal.length(), 0.0000000001, "TC01: Normal is not a unit vector");
+
+        // TC02: Checking the same points, but flipped order for normal direction
+        Point p4 = new Point(0, 0, 1);
+        Plane plane2 = new Plane(p1, p2, p4);
+        Vector normal2 = plane2.getNormal(p1);
+
+        // Check that the normal vector is still perpendicular to the vectors
+        assertEquals(0, normal2.dotProduct(v1), "TC02: Normal is not perpendicular to v1");
+        assertEquals(0, normal2.dotProduct(v2), "TC02: Normal is not perpendicular to v2");
+        assertEquals(1, normal2.length(), 0.0000000001, "TC02: Normal is not a unit vector");
     }
 }
