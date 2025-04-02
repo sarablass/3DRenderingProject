@@ -19,7 +19,23 @@ public class Ray {
         this.head = head;
         this.direction = direction.normalize();
     }
+    /**
+     * Returns the head (starting point) of the ray.
+     *
+     * @return The head point of the ray.
+     */
+    public Point getHead() {
+        return head;
+    }
 
+    /**
+     * Returns the direction vector of the ray.
+     *
+     * @return The normalized direction vector of the ray.
+     */
+    public Vector getDirection() {
+        return direction;
+    }
     /**
      * Checks if this ray is equal to another object.
      * Two rays are considered equal if they have the same head point and direction vector.

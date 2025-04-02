@@ -18,11 +18,11 @@ public class Cylinder extends Tube {
      * Constructs a cylinder with the given radius, central axis, and height.
      *
      * @param radius the radius of the cylinder
-     * @param exis   the central axis of the cylinder
+     * @param axis   the central axis of the cylinder
      * @param height the height of the cylinder
      */
-    public Cylinder(double radius, Ray exis, double height) {
-        super(radius, exis);
+    public Cylinder(double radius, Ray axis, double height) {
+        super(radius, axis);
         this.height = height;
     }
 
