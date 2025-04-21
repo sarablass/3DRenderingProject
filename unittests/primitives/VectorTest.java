@@ -28,7 +28,7 @@ class VectorTest {
     }
 
     /**
-     * Unit tests for {@link primitives.Vector#Vector(Double3)}
+     * Test method for {@link primitives.Vector#Vector(Double3)}
      */
     @Test
     void testConstructorWithDouble3() {
@@ -131,8 +131,7 @@ class VectorTest {
     }
 
     /**
-     * Test method for
-     * {@link primitives.Vector#crossProduct(primitives.Vector)}.
+     * Test method for {@link primitives.Vector#crossProduct(primitives.Vector)}.
      */
     @Test
     void testCrossProduct() {

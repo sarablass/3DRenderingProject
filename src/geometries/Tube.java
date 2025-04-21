@@ -40,8 +40,23 @@ public class Tube extends RadialGeometry {
      */
     @Override
     public Vector getNormal(Point point) {
-        double t = axis.getDirection().dotProduct(point.subtract(axis.getHead()));
-        Point oPlusTv = axis.getHead().add(axis.getDirection().scale(t));
-        return point.subtract(oPlusTv).normalize();
+        Vector v = axis.getDirection();
+        Point o = axis.getHead();
+
+        Vector pMinusO = point.subtract(o);
+        double t = v.dotProduct(pMinusO);
+
+        Point oPlusTv;
+        if (t == 0) {
+            oPlusTv = o;
+        } else {
+            oPlusTv = o.add(v.scale(t));
+        }
+
+        Vector normal = point.subtract(oPlusTv);
+        if (normal.equals(Vector.ZERO)) {
+            throw new IllegalArgumentException("Cannot compute normal vector: point is on the axis line");
+        }
+        return normal.normalize();
     }
 }

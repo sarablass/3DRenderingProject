@@ -11,7 +11,7 @@ public class Sphere extends RadialGeometry {
     /**
      * The center point of the sphere.
      */
-    private final Point center;
+    protected final Point center;
 
     /**
      * Constructs a Sphere object with the specified center and radius.
@@ -25,13 +25,12 @@ public class Sphere extends RadialGeometry {
     }
 
     /**
-     * Returns the normal vector to the sphere at a given point.
-     *
-     * @param point the point on the sphere's surface
-     * @return the normal vector at the given point
+     * Calculates the normal vector to the sphere at a given point.
+     * @param point the point on the sphere
+     * @return the normal vector
      */
     @Override
     public Vector getNormal(Point point) {
-        return null;
+        return point.subtract(center).normalize();
     }
 }
