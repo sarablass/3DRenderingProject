@@ -7,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * Unit tests for {@link primitives.Vector} class.
  */
-class VectorTest {
+class VectorTests {
 
     /**
      * Unit tests for {@link primitives.Vector#Vector(double, double, double)}

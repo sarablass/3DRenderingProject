@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * Unit tests for the {@link geometries.Tube} class.
  */
 
-class TubeTest {
+class TubeTests {
     /**
      * Test method for {@link geometries.Tube#getNormal(primitives.Point)}.
      * This method tests the normal vector calculation for a Tube.
@@ -39,5 +39,9 @@ class TubeTest {
         assertFalse(result.equals(Vector.ZERO), "Normal vector should not be the zero vector");
         assertEquals(1, result.length(), 1e-10, "Tube's normal is not a unit vector");
         assertTrue(result.dotProduct(tube.axis.getDirection()) == 0, "Normal is not orthogonal to the axis");
+    }
+
+    @Test
+    void testFindIntersections() {
     }
 }

@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * Unit tests for {@link primitives.Point} class.
  */
-class PointTest {
+class PointTests {
 
     /**
      * Test method for {@link primitives.Point#subtract(primitives.Point)}.

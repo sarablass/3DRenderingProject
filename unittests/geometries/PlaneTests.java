@@ -7,7 +7,7 @@ import primitives.Point;
 import primitives.Vector;
 import primitives.Util;
 
-class PlaneTest {
+class PlaneTests {
 
     /**
      * Delta value for accuracy when comparing the numbers of type 'double' in
@@ -93,5 +93,13 @@ class PlaneTest {
 
         // Check that the normal is normalized (length == 1)
         assertEquals(1, normal.length(), 1e-10, "Normal is not a unit vector");
+    }
+
+    @Test
+    void testFindIntersections() {
+    }
+
+    @Test
+    void testTestGetNormal() {
     }
 }

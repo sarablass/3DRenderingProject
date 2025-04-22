@@ -1,7 +1,10 @@
 package geometries;
 
 import primitives.Point;
+import primitives.Ray;
 import primitives.Vector;
+
+import java.util.List;
 
 /**
  * Represents a plane in three-dimensional space.
@@ -41,6 +44,11 @@ public class Plane extends Geometry {
     public Plane(Point q, Vector normal) {
         this.q = q;
         this.normal = normal.normalize(); // Ensure the normal is stored as a normalized vector
+    }
+
+    @Override
+    public List<Point> findIntersections(Ray ray) {
+        return null;
     }
 
     /**

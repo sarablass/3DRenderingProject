@@ -6,9 +6,8 @@ import primitives.*;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static primitives.Util.isZero;
 
-class SphereTest {
+class SphereTests {
     final Point gp1 = new Point(0.0651530771650466, 0.355051025721682, 0);
     final Point gp2 = new Point(1.53484692283495, 0.844948974278318, 0);
     final List<Point> exp = List.of(gp1, gp2);
@@ -38,4 +37,9 @@ class SphereTest {
         // Ensure |result| = 1
         assertEquals(1, result.length(), 1e-10, "Sphere's normal is not a unit vector");
     }
+
+    @Test
+    void testFindIntersections() {
+    }
+
 }
