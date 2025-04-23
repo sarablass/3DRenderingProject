@@ -113,8 +113,44 @@ class PolygonTests {
                     "Polygon's normal is not orthogonal to one of the edges");
     }
 
+    /**
+     * Test method for
+     * {@link geometries.Polygon#findIntersections(primitives.Ray)}.
+     */
     @Test
     void testFindIntersections() {
+        // ============ Equivalence Partitions Tests ==============
+        Polygon polygon = new Polygon(new Point(0, 0, 0),
+                new Point(1, 0, 0),
+                new Point(1, 1, 0),
+                new Point(0, 1, 0));
+
+        // TC01: Ray intersects the polygon
+        Ray ray1 = new Ray(new Point(0.5, 0.5, -1), new Vector(0, 0, 1).normalize());
+        List<Point> intersections = polygon.findIntersections(ray1);
+        assertNotNull(intersections, "Expected one intersection point");
+        assertEquals(1, intersections.size(), "Ray should intersect the polygon at one point");
+
+        // TC02: Ray does not intersect the polygon
+        Ray ray2 = new Ray(new Point(0.5, 0.5, -1), new Vector(0, 0, -1).normalize());
+        assertNull(polygon.findIntersections(ray2), "Ray should not intersect the polygon");
+
+        // =============== Boundary Values Tests ==================
+
+        // TC03: Ray intersects the polygon on the edge
+        Ray ray5 = new Ray(new Point(0.5, 0.5, -1), new Vector(0, 1, 0).normalize());
+        intersections = polygon.findIntersections(ray5);
+        assertNull(intersections, "Ray should not intersect the polygon exactly on the edge");
+
+        // TC04: Ray intersects the polygon on the vertex
+        Ray ray6 = new Ray(new Point(0.5, 0.5, -1), new Vector(1, 1, 0).normalize());
+        intersections = polygon.findIntersections(ray6);
+        assertNull(intersections, "Ray should not intersect the polygon exactly on the vertex");
+
+        // TC08: Ray intersects the polygon on the edge's continuation
+        Ray ray7 = new Ray(new Point(0.5, 0.5, -1), new Vector(0, 1, 0).normalize());
+        intersections = polygon.findIntersections(ray7);
+        assertNull(intersections, "Ray should not intersect the polygon on the edge's continuation");
     }
 
 }

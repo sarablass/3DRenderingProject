@@ -6,11 +6,14 @@ import primitives.Vector;
 
 import java.util.List;
 
+import static primitives.Util.alignZero;
+import static primitives.Util.isZero;
+
 /**
  * Represents a plane in three-dimensional space.
  * The class is immutable.
  */
-public class Plane extends Geometry {
+public class Plane implements Geometry {
     /**
      * A reference point on the plane.
      */
@@ -46,9 +49,29 @@ public class Plane extends Geometry {
         this.normal = normal.normalize(); // Ensure the normal is stored as a normalized vector
     }
 
+    /**
+     * Finds the intersection points of a given ray with the plane.
+     *
+     * @param ray the ray to intersect with the plane
+     * @return a list of intersection points, or null if there are no intersections
+     */
     @Override
     public List<Point> findIntersections(Ray ray) {
-        return null;
+
+        if (q.equals(ray.getHead())) { // if the ray starts from the plane it doesn't cut the plane at all
+            return null;
+        }
+        double nv = normal.dotProduct(ray.getDirection());
+        if (isZero(nv)) {
+            return null;
+        }
+        double t = alignZero(normal.dotProduct(q.subtract(ray.getHead())) / nv);
+        if (t > 0) {
+            return List.of(ray.getPoint(t));
+        } else {
+            return null;
+
+        }
     }
 
     /**

@@ -80,9 +80,33 @@ public class Polygon implements Geometry {
 
    @Override
    public List<Point> findIntersections(Ray ray) {
-      return null;
-   }
+      //check if the ray intersects the plane of the polygon- the polygon is on a plane
+      Plane plane = new Plane(vertices.get(0), vertices.get(1), vertices.get(2));
+      List<Point> intersections = plane.findIntersections(ray);
+      if (intersections == null) {
+         return null;
+      }
 
+      Point p0 = ray.getHead();
+      Vector v = ray.getDirection();
+
+      // Check if the intersection point is inside the polygon
+      Point p = intersections.get(0);
+      int numVertices = vertices.size();
+      for (Point vi : vertices) {
+         int nextIndex = (vertices.indexOf(vi) + 1) % vertices.size();
+         Point vi1 = vertices.get(nextIndex);
+         Vector edge = vi1.subtract(vi);
+         Vector vp = p.subtract(vi);
+         Vector crossProduct = edge.crossProduct(vp);
+         double dotProduct = v.dotProduct(crossProduct);    //if the point is outside the polygon
+         if (dotProduct < 0) {
+            return null;
+         }
+      }
+      //if all dot products are positive, the point is inside the polygon
+      return intersections;
+   }
    @Override
    public Vector getNormal(Point point) { return plane.getNormal(point); }
 
