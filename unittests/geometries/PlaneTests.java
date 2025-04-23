@@ -91,11 +91,11 @@ class PlaneTests {
         Vector vec2 = v3.subtract(v1);
 
         // Check that the normal is orthogonal to both vectors on the plane
-        assertEquals(0, normal.dotProduct(vec1), 1e-10, "Normal is not perpendicular to vec1");
-        assertEquals(0, normal.dotProduct(vec2), 1e-10, "Normal is not perpendicular to vec2");
+        assertEquals(0, normal.dotProduct(vec1), DELTA, "Normal is not perpendicular to vec1");
+        assertEquals(0, normal.dotProduct(vec2), DELTA, "Normal is not perpendicular to vec2");
 
         // Check that the normal is normalized (length == 1)
-        assertEquals(1, normal.length(), 1e-10, "Normal is not a unit vector");
+        assertEquals(1, normal.length(), DELTA, "Normal is not a unit vector");
     }
 
     /** A point used in some tests */
@@ -162,9 +162,5 @@ class PlaneTests {
         //TC16: Ray begins in the same point which appears as reference point in the plane
         assertNull(plane.findIntersections(new Ray(new Point(1,0,1), new Vector(2,3,5))),
                 "Does not return null- when ray begins in the same point which appears as reference point in the plane");
-    }
-
-    @Test
-    void testTestGetNormal() {
     }
 }

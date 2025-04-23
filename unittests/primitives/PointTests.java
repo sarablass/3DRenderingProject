@@ -7,6 +7,12 @@ import static org.junit.jupiter.api.Assertions.*;
  * Unit tests for {@link primitives.Point} class.
  */
 class PointTests {
+    /**
+     * Delta value for accuracy when comparing the numbers of type 'double' in
+     * assertEquals
+     */
+    private static final double DELTA = 0.000001;
+
 
     /**
      * Test method for {@link primitives.Point#subtract(primitives.Point)}.
@@ -61,18 +67,20 @@ class PointTests {
      * Test method for {@link primitives.Point#distance(primitives.Point)}.
      */
     @Test
-    void testDistance() {
+    void testDistanceWithDifferentValues() {
         // ============ Equivalence Partitions Tests ==============
 
-        // TC01: Computing distance between two points
-        Point p1 = new Point(1, 2, 3);
-        Point p2 = new Point(4, 6, 8);
-        assertEquals(Math.sqrt(50), p1.distance(p2), 0.00001, "ERROR: distance() wrong value");
+        // TC01: Computing distance between two different points
+        Point p1 = new Point(-1, 0, 2);
+        Point p2 = new Point(2, 4, -2);
+        // Distance = sqrt[(2 - (-1))² + (4 - 0)² + (-2 - 2)²] = sqrt[9 + 16 + 16] = sqrt[41]
+        assertEquals(Math.sqrt(41), p1.distance(p2), DELTA, "ERROR: distance() wrong value");
 
         // =============== Boundary Values Tests ==================
 
-        // TC02: Distance from a point to itself should be zero
-        assertEquals(0, p1.distance(p1), "ERROR: Distance to itself should be 0");
+        // TC02: Distance from a point to itself
+        assertEquals(0, p2.distance(p2), "ERROR: Distance to itself should be 0");
     }
+
 }
 

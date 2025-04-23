@@ -34,7 +34,9 @@ public class Plane implements Geometry {
      */
     public Plane(Point v0, Point v1, Point v2) {
         this.q = v0;
-        this.normal = null; // The normal will be calculated in the next stage
+        Vector u = v0.subtract(v1);
+        Vector v = v0.subtract(v2);
+        this.normal = u.crossProduct(v).normalize(); // The normal will be calculated in the next stage
     }
 
     /**

@@ -8,6 +8,12 @@ import static org.junit.jupiter.api.Assertions.*;
  * Unit tests for {@link primitives.Vector} class.
  */
 class VectorTests {
+    /**
+     * Delta value for accuracy when comparing the numbers of type 'double' in
+     * assertEquals
+     */
+    private static final double DELTA = 0.000001;
+
 
     /**
      * Unit tests for {@link primitives.Vector#Vector(double, double, double)}
@@ -79,11 +85,11 @@ class VectorTests {
         // =============== Boundary Values Tests ==================
         // TC11: Test subtracting a vector from itself (should give a zero vector)
         Vector v3 = new Vector(2, 3, 4);
-        assertEquals(new Vector(0, 0, 0), v3.subtract(v3), "ERROR: Vector minus itself should result in a zero vector");
+        assertThrows(IllegalArgumentException.class, ()-> v3.subtract(v3), "ERROR: Vector minus itself does not throw an exception");
 
         // TC12: Test subtracting from a zero vector
-        Vector zeroVector = new Vector(0, 0, 0);
-        assertEquals(new Vector(1, 2, 3), zeroVector.subtract(new Vector(-1, -2, -3)), "ERROR: Subtracting negative values from zero vector should give positive results");
+//        Vector zeroVector = new Vector(0, 0, 0);
+//        assertEquals(new Vector(1, 2, 3), zeroVector.subtract(new Vector(-1, -2, -3)), "ERROR: Subtracting negative values from zero vector should give positive results");
     }
 
     /**
@@ -118,9 +124,9 @@ class VectorTests {
 
         // =============== Boundary Values Tests ==================
 
-        // TC11: Dot product of a vector with a zero vector should be 0
-        Vector zeroVector = new Vector(0, 0, 0);
-        assertEquals(0, v1.dotProduct(zeroVector), "ERROR: dotProduct() result is incorrect for zero vector");
+//        // TC11: Dot product of a vector with a zero vector should be 0
+//        Vector zeroVector = new Vector(0, 0, 0);
+//        assertEquals(0, v1.dotProduct(zeroVector), "ERROR: dotProduct() result is incorrect for zero vector");
 
         // TC12: Dot product of a vector with a vector of ones
         Vector onesVector = new Vector(1, 1, 1);
@@ -147,7 +153,7 @@ class VectorTests {
 
         // TC01: Testing that the length of the cross product is correct
         Vector vr = v1.crossProduct(v2);
-        assertEquals(v1.length() * v2.length(), vr.length(), 0.00001, "crossProduct() wrong result length");
+        assertEquals(v1.length() * v2.length(), vr.length(), DELTA, "crossProduct() wrong result length");
         assertEquals(0, vr.dotProduct(v1), "crossProduct() result is not orthogonal to 1st operand");
         assertEquals(0, vr.dotProduct(v2), "crossProduct() result is not orthogonal to 2nd operand");
 
@@ -168,7 +174,7 @@ class VectorTests {
         // ============ Equivalence Partitions Tests ==============
         // TC01: Correct squared length calculation
         Vector v1 = new Vector(1, 2, 3);
-        assertEquals(14, v1.lengthSquared(), 0.00001, "ERROR: lengthSquared() wrong value");
+        assertEquals(14, v1.lengthSquared(), DELTA, "ERROR: lengthSquared() wrong value");
     }
 
     /**
@@ -179,7 +185,7 @@ class VectorTests {
         // ============ Equivalence Partitions Tests ==============
         // TC01: Correct length calculation
         Vector v = new Vector(0, 3, 4);
-        assertEquals(5, v.length(), 0.00001, "ERROR: length() wrong value");
+        assertEquals(5, v.length(), DELTA, "ERROR: length() wrong value");
     }
 
     /**
@@ -191,7 +197,7 @@ class VectorTests {
         Vector normalized = v.normalize();
         // ============ Equivalence Partitions Tests ==============
         // TC01: Normalization of a general vector
-        assertEquals(1, normalized.length(), 0.00001, "ERROR: normalize() does not produce a unit vector");
+        assertEquals(1, normalized.length(), DELTA, "ERROR: normalize() does not produce a unit vector");
         assertThrows(IllegalArgumentException.class, () -> normalized.crossProduct(v), "ERROR: normalize() result is not parallel to the original vector");
     }
 }
