@@ -6,6 +6,8 @@ import primitives.Ray;
 
 import java.util.List;
 
+import static primitives.Util.isZero;
+
 /**
  * Represents a tube in 3D space.
  * A tube is defined by a radius and a central axis represented by a ray.
@@ -33,37 +35,29 @@ public class Tube extends RadialGeometry {
     }
 
     /**
-     * Returns the normal vector to the tube at a given point.
-     * The normal is calculated as:
-     * N = (P - (O + tV)) / |P - (O + tV)|
-     * Where:
-     * P - the given point
-     * O - the head of the axis ray
-     * V - the direction of the axis ray
-     * t - projection scalar of (P - O) onto V
+     * Calculates the normal vector to the tube at the specified point.
      *
-     * @param point the point on the tube's surface
-     * @return the normal vector to the tube at the given point
+     * @param p The point on the surface of the tube.
+     * @return The normal vector to the tube at the specified point, which is null.
      */
-    @Override
-    public Vector getNormal(Point point) {
-        Vector v = axis.getDirection();
-        Point o = axis.getHead();
+    public Vector getNormal(Point p) {
 
-        Vector pMinusO = point.subtract(o);
-        double t = v.dotProduct(pMinusO);
+        // Calculate the vector from the base point of the axis to the given point
+        Vector vectorFromAxisStart = p.subtract(axis.getHead());
 
-        Point oPlusTv;
-        if (t == 0) {
-            oPlusTv = o;
-        } else {
-            oPlusTv = o.add(v.scale(t));
-        }
+        // Project the above vector on the axis direction to find the projection point on the axis
+        double t = axis.getDirection().dotProduct(vectorFromAxisStart);
+        Point o;
+        if(isZero(t))
+            o=axis.getHead();
+        else
+            o = axis.getPoint(t);
 
-        Vector normal = point.subtract(oPlusTv);
-        if (normal.equals(Vector.ZERO)) {
-            throw new IllegalArgumentException("Cannot compute normal vector: point is on the axis line");
-        }
-        return normal.normalize();
+        // Calculate the normal vector by subtracting the projection point from the given point
+        Vector normal = p.subtract(o).normalize();
+
+        return normal;
+
+
     }
 }

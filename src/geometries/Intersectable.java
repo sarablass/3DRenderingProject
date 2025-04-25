@@ -12,12 +12,4 @@ public interface Intersectable {
      * @return A list of intersection points.
      */
     List<Point> findIntersections(Ray ray);
-
-    /**
-     * This method is used to get the normal vector at a given point on the geometry.
-     *
-     * @param point The point on the geometry.
-     * @return The normal vector at the given point.
-     */
-    Vector getNormal(Point point);
 }
