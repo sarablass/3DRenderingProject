@@ -19,12 +19,7 @@ class CylinderTests {
      */
     @Test
     void testGetNormal() {
-
-
-
         // ============ Equivalence Partitions Tests ==============
-
-
         Cylinder cylinder = new Cylinder(1, new Ray(new Point(0, 0, 0), new Vector(0, 0, 1)), 5);
 
         // Test normal to a point on the lateral surface

@@ -5,12 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="6a3ab907-c752-4f22-92c2-c62b550763a5" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/geometries/Geometries.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/unittests/geometries/GeometriesTests.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/unittests/primitives/RayTests.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/geometries/Intersectable.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/geometries/Intersectable.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/geometries/Tube.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/geometries/Tube.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/geometries/Cylinder.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/geometries/Cylinder.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/unittests/geometries/CylinderTests.java" beforeDir="false" afterPath="$PROJECT_DIR$/unittests/geometries/CylinderTests.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -105,7 +102,7 @@
       <recent name="geometries" />
     </key>
   </component>
-  <component name="RunManager" selected="JUnit.VectorTests">
+  <component name="RunManager" selected="JUnit.All in ISE5785_6466_8589">
     <configuration name="All in ISE5785_6466_8589" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="ISE5785_6466_8589" />
       <option name="PACKAGE_NAME" value="" />
@@ -177,8 +174,8 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="JUnit.VectorTests" />
         <item itemvalue="JUnit.All in ISE5785_6466_8589" />
+        <item itemvalue="JUnit.VectorTests" />
         <item itemvalue="JUnit.SphereTests" />
         <item itemvalue="JUnit.TubeTests" />
         <item itemvalue="JUnit.TubeTests.testGetNormal" />
@@ -208,6 +205,8 @@
       <workItem from="1745355031877" duration="304000" />
       <workItem from="1745530239214" duration="6733000" />
       <workItem from="1745539553358" duration="52000" />
+      <workItem from="1745539695842" duration="406000" />
+      <workItem from="1745849173137" duration="1951000" />
     </task>
     <servers />
   </component>
