@@ -47,12 +47,16 @@ public class Camera implements Cloneable {
     }
 
         public Builder setVpDistance(double distance) {
-        if (distance <= 0) {
-            throw new IllegalArgumentException("distance must be positive");
+            if (distance <= 0) {
+                throw new IllegalArgumentException("distance must be positive");
+            }
+            camera.distance= distance;
+            return this;
         }
-        camera.distance= distance;
-        return this;
-    }
+        public Builder setResolution(int nX  ,int  nY ) {
+
+            return null;
+        }
 
         public Camera build() {
 

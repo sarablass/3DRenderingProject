@@ -6,15 +6,9 @@ import geometries.*;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-/**
- * Testing constructRay(int, int, int, int)
- * and findIntersections(Ray) of Sphere, Plane, and Triangle.
- */
-
-public class CameraIntegrationsTest {
-
+public class CameraIntersectionsIntegrationTests {
     private final Vector vUp = new Vector(0, -1, 0);
     private final Vector vTo = new Vector(0, 0, -1);
 
@@ -47,22 +41,22 @@ public class CameraIntegrationsTest {
 
 
         //TC01: Sphere r=1 (2 intersections)
-        helpCountsIntersections(camera1, new Sphere(1d, new Point(0, 0, -3)),2 );
+        helpCountsIntersections(camera1, new Sphere( new Point(0, 0, -3),1d),2 );
 
 
         //TC02: Sphere r=2.5 (18 intersections)
-        helpCountsIntersections(camera2, new Sphere(2.5d, new Point(0, 0, -2.5)),18 );
+        helpCountsIntersections(camera2, new Sphere( new Point(0, 0, -2.5),2.5d),18 );
 
 
         //TC03: Sphere r=2 (10 intersections)
-        helpCountsIntersections(camera2, new Sphere(2d, new Point(0, 0, -2)),10 );
+        helpCountsIntersections(camera2, new Sphere( new Point(0, 0, -2),2d),10 );
 
 
         //TC04: Sphere r=4 (9 intersections)
-        helpCountsIntersections(camera2, new Sphere(4d, new Point(0, 0, 1)),9 );
+        helpCountsIntersections(camera2, new Sphere( new Point(0, 0, 1),4d),9 );
 
         //TC05: Sphere r=0.5 (0 intersections)
-        helpCountsIntersections(camera1, new Sphere(0.5d, new Point(0, 0, 1)),0 );
+        helpCountsIntersections(camera1, new Sphere( new Point(0, 0, 1),0.5d),0 );
 
     }
 
