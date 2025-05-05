@@ -86,10 +86,6 @@ class VectorTests {
         // TC11: Test subtracting a vector from itself (should give a zero vector)
         Vector v3 = new Vector(2, 3, 4);
         assertThrows(IllegalArgumentException.class, ()-> v3.subtract(v3), "ERROR: Vector minus itself does not throw an exception");
-
-        // TC12: Test subtracting from a zero vector
-//        Vector zeroVector = new Vector(0, 0, 0);
-//        assertEquals(new Vector(1, 2, 3), zeroVector.subtract(new Vector(-1, -2, -3)), "ERROR: Subtracting negative values from zero vector should give positive results");
     }
 
     /**
