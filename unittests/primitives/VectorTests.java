@@ -72,7 +72,7 @@ class VectorTests {
     }
 
     /**
-     * Test method for {@link primitives.Vector#subtract(primitives.Vector)}.
+     * Test method for {@link primitives.Vector#subtract(Point)(primitives.Vector)}.
      */
     @Test
     void testSubtract() {
