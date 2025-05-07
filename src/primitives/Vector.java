@@ -2,6 +2,11 @@ package primitives;
 
 public class Vector extends Point {
 
+//    // Static unit vectors for the axes
+//    public static final Vector AXIS_X = new Vector(1, 0, 0);
+//    public static final Vector AXIS_Y = new Vector(0, 1, 0);
+//    public static final Vector AXIS_Z = new Vector(0, 0, 1);
+
     // Constructor accepting three double values for coordinates
     public Vector(double x, double y, double z) {
         super(x, y, z);

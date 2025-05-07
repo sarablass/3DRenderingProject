@@ -5,11 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="6a3ab907-c752-4f22-92c2-c62b550763a5" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/unittests/renderer/CameraIntersectionsIntegrationTests.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/primitives/Vector.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/primitives/Vector.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/renderer/Camera.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/renderer/Camera.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/renderer/CameraIntegrationsTest.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/unittests/renderer/CameraTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/unittests/renderer/CameraTest.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -67,6 +65,7 @@
     &quot;JUnit.TubeTest.executor&quot;: &quot;Run&quot;,
     &quot;JUnit.TubeTest.testGetNormal.executor&quot;: &quot;Run&quot;,
     &quot;JUnit.VectorTests.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.renderer in ISE5785_6466_8589.executor&quot;: &quot;Run&quot;,
     &quot;Repository.Attach.Annotations&quot;: &quot;false&quot;,
     &quot;Repository.Attach.JavaDocs&quot;: &quot;false&quot;,
     &quot;Repository.Attach.Sources&quot;: &quot;false&quot;,
@@ -106,7 +105,7 @@
       <recent name="geometries" />
     </key>
   </component>
-  <component name="RunManager" selected="JUnit.All in ISE5785_6466_8589">
+  <component name="RunManager" selected="JUnit.renderer in ISE5785_6466_8589">
     <configuration name="All in ISE5785_6466_8589" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="ISE5785_6466_8589" />
       <option name="PACKAGE_NAME" value="" />
@@ -145,22 +144,6 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="TubeTests.testGetNormal" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="ISE5785_6466_8589" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="geometries.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <option name="PACKAGE_NAME" value="geometries" />
-      <option name="MAIN_CLASS_NAME" value="geometries.TubeTests" />
-      <option name="METHOD_NAME" value="testGetNormal" />
-      <option name="TEST_OBJECT" value="method" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
     <configuration name="VectorTests" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="ISE5785_6466_8589" />
       <extension name="coverage">
@@ -176,13 +159,27 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <configuration name="renderer in ISE5785_6466_8589" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="ISE5785_6466_8589" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="renderer.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="renderer" />
+      <option name="TEST_OBJECT" value="package" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="JUnit.renderer in ISE5785_6466_8589" />
         <item itemvalue="JUnit.All in ISE5785_6466_8589" />
         <item itemvalue="JUnit.VectorTests" />
         <item itemvalue="JUnit.SphereTests" />
         <item itemvalue="JUnit.TubeTests" />
-        <item itemvalue="JUnit.TubeTests.testGetNormal" />
       </list>
     </recent_temporary>
   </component>
@@ -211,6 +208,7 @@
       <workItem from="1745539553358" duration="52000" />
       <workItem from="1745539695842" duration="406000" />
       <workItem from="1745849173137" duration="2654000" />
+      <workItem from="1746600065833" duration="245000" />
     </task>
     <servers />
   </component>

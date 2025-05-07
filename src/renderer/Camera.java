@@ -15,9 +15,20 @@ public class Camera implements Cloneable {
     public static Builder getBuilder() {
         return new Builder();
     }
+
     public Ray constructRay(int nX,int nY, int j, int i){
-        return null;
+        double Ry=height/nY;
+        double Rx=width/nX;
+        Point pIJ=p0;
+        double Yi=-(i-(nY-1)/2d)*Ry;
+        double Xj=(j-(nX-1)/2d)*Rx;
+        if(!isZero(Xj)) pIJ=pIJ.add(vRight.scale(Xj));
+        if(!isZero(Yi)) pIJ=pIJ.add(vUp.scale(Yi));
+
+        pIJ=pIJ.add(vTo.scale(distance));
+        return new Ray(p0,pIJ.subtract(p0).normalize());
     }
+
     public static class Builder {
 
         private final Camera camera = new Camera();
@@ -37,6 +48,50 @@ public class Camera implements Cloneable {
         return this;
     }
 
+        public Builder setDirection(Point target, Vector up) {
+            // Calculate vTo as the normalized vector from p0 to the target
+            Vector vTo = target.subtract(camera.p0).normalize();
+
+            // Calculate vRight as the cross product of vTo and up
+            Vector vRight = vTo.crossProduct(up).normalize();
+
+            // Calculate the precise vUp as the cross product of vRight and vTo
+            Vector vUp = vRight.crossProduct(vTo).normalize();
+
+            // Set the camera's direction vectors
+            camera.vTo = vTo;
+            camera.vUp = vUp;
+            camera.vRight = vRight;
+
+            return this;
+        }
+
+        public Builder setDirection(Point target) {
+            // Use the default "up" vector as the Y-axis
+            Vector defaultUp = new Vector(0, 1, 0);
+
+            // Calculate vTo as the normalized vector from p0 to the target
+            Vector vTo = target.subtract(camera.p0).normalize();
+
+            // Check if vTo is parallel to the defaultUp vector
+            if (isZero(vTo.dotProduct(defaultUp))) {
+                throw new IllegalArgumentException("vTo cannot be parallel to the default up vector");
+            }
+
+            // Calculate vRight as the cross product of vTo and defaultUp
+            Vector vRight = vTo.crossProduct(defaultUp).normalize();
+
+            // Calculate the precise vUp as the cross product of vRight and vTo
+            Vector vUp = vRight.crossProduct(vTo).normalize();
+
+            // Set the camera's direction vectors
+            camera.vTo = vTo;
+            camera.vUp = vUp;
+            camera.vRight = vRight;
+
+            return this;
+        }
+
         public Builder setVpSize(double width, double height) {
         if (width <= 0 || height <= 0) {
             throw new IllegalArgumentException("width and height must be positive");
@@ -53,6 +108,7 @@ public class Camera implements Cloneable {
             camera.distance= distance;
             return this;
         }
+
         public Builder setResolution(int nX  ,int  nY ) {
 
             return null;
