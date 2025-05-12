@@ -1,11 +1,12 @@
 package primitives;
+import static primitives.Util.alignZero;
+
 
 public class Vector extends Point {
 
 //    // Static unit vectors for the axes
-//    public static final Vector AXIS_X = new Vector(1, 0, 0);
-//    public static final Vector AXIS_Y = new Vector(0, 1, 0);
-//    public static final Vector AXIS_Z = new Vector(0, 0, 1);
+   public static final Vector AXIS_X = new Vector(1, 0, 0);
+   public static final Vector AXIS_Z = new Vector(0, 0, 1);
 
     // Constructor accepting three double values for coordinates
     public Vector(double x, double y, double z) {
@@ -67,12 +68,12 @@ public class Vector extends Point {
     }
 
     /**
-     * Computes the squared length (magnitude squared) of the vector.
+     * Computes the square of the length of this vector.
      *
-     * @return The squared length of the vector
+     * @return The square of the length of this vector.
      */
     public double lengthSquared() {
-        return dotProduct(this);
+        return ((xyz.d1() * xyz.d1()) + (xyz.d2() * xyz.d2()) + (xyz.d3() * xyz.d3()));
     }
 
     /**
@@ -90,8 +91,12 @@ public class Vector extends Point {
      * @return A new normalized vector
      */
     public Vector normalize() {
-        double length = length();
-        return new Vector(xyz.d1() / length, xyz.d2() / length, xyz.d3() / length);
+        double length = alignZero(length());
+        if (length == 0)
+            throw new ArithmeticException("Cannot normalize Vector(0,0,0)");
+//        return new Vector(xyz.d1() / length, xyz.d2() / length, xyz.d3() / length);
+        return new Vector(xyz.scale(1 / length));
+
     }
 
     @Override
