@@ -38,16 +38,19 @@ public class Ray {
     public Vector getDirection() {
         return direction;
     }
+
+
+
     /**
-     * Returns a point on the ray at a distance "distance" from the head.
+     * Returns a point on the ray at a distance t from the head.
      *
-     * @param distance The distance from the head of the ray.
+     * @param t The distance from the head of the ray.
      * @return The point on the ray at the specified distance from the head.
      */
-    public Point getPoint(double distance) {
-        if(isZero(distance))
+    public Point getPoint(double t) {
+        if (isZero(t))
             return head;
-        return head.add(direction.scale(distance));
+        return head.add(direction.scale(t));
     }
     /**
      * Checks if this ray is equal to another object.

@@ -28,8 +28,7 @@ class GeometriesTests {
 
         // =============== Boundary Values Tests ==================
         // TC02: empty geometries list
-        Geometries geometries2 = new Geometries();
-        assertNull(geometries2.findIntersections(null), "empty geometries list");
+        assertNull(new Geometries().findIntersections(null), "empty geometries list");
 
         // TC03: no geometry is intersected
         Ray rayNoIntersections = new Ray(new Point(1, -1, 1), new Vector(0, -1, 0));
