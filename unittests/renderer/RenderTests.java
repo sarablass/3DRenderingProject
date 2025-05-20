@@ -1,4 +1,4 @@
-package unittests.renderer;
+package renderer;
 
 import static java.awt.Color.*;
 
@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import geometries.*;
 import lighting.AmbientLight;
 import primitives.*;
+import renderer.Camera;
 import scene.Scene;
 
 /**

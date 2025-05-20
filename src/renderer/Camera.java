@@ -3,6 +3,7 @@ package renderer;
 import primitives.Point;
 import primitives.Ray;
 import primitives.Vector;
+import scene.Scene;
 
 import java.util.MissingResourceException;
 
@@ -19,6 +20,9 @@ public class Camera implements Cloneable {
     private Point p0;
     private Vector vTo, vUp, vRight;
     private double width = 0.0, height = 0.0, distance = 0.0;
+    private ImageWriter imageWriter;
+    private RayTracerBase rayTracer;
+
 
     /**
      * Private constructor to enforce the use of the Builder pattern.
@@ -169,15 +173,19 @@ public class Camera implements Cloneable {
             return this;
         }
 
-        /**
-         * (Optional) Method stub to set resolution. Currently not implemented.
-         *
-         * @param nX number of pixels in X-direction
-         * @param nY number of pixels in Y-direction
-         * @return currently returns null
-         */
         public Builder setResolution(int nX, int nY) {
-            return null;
+            camera.imageWriter = new ImageWriter(nX, nY);
+            return this;
+        }
+
+        public Builder setRayTracer(Scene scene, RayTracerType rayTracerType) {
+            if (rayTracerType == RayTracerType.SIMPLE) {
+                camera.rayTracer = new SimpleRayTracer(scene);
+
+            } else {
+                camera.rayTracer = null;
+            }
+            return this;
         }
 
         /**

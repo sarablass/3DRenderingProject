@@ -4,13 +4,12 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 import primitives.*;
-import renderer.Camera;
 
 /**
  * Testing Camera Class
  * @author Dan
  */
-class CameraTest {
+class CameraTests {
    /** Camera builder for the tests */
    private final Camera.Builder cameraBuilder = Camera.getBuilder()
       .setLocation(Point.ZERO)
