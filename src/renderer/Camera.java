@@ -1,5 +1,8 @@
 package renderer;
 
+import static primitives.Util.isZero;
+
+import primitives.Color;
 import primitives.Point;
 import primitives.Ray;
 import primitives.Vector;
@@ -7,7 +10,6 @@ import scene.Scene;
 
 import java.util.MissingResourceException;
 
-import static primitives.Util.alignZero;
 import static primitives.Util.isZero;
 
 /**
@@ -22,6 +24,9 @@ public class Camera implements Cloneable {
     private double width = 0.0, height = 0.0, distance = 0.0;
     private ImageWriter imageWriter;
     private RayTracerBase rayTracer;
+    private int Nx = 1;
+    private int Ny = 1;
+
 
 
     /**
@@ -63,9 +68,49 @@ public class Camera implements Cloneable {
         return new Ray(p0, pIJ.subtract(p0).normalize());
     }
 
+    public Camera renderImage() {
+        for (int i = 0; i < Nx; i++) {
+            for (int j = 0; j < Ny; j++) {
+                castRay(i,j);
+            }
+        }
+        return this;
+    }
+
+    public Camera printGrid(int interval, Color color) {
+        for (int i = 0; i < Nx; i++) {
+            for (int j = 0; j < Ny; j++) {
+                if (i % interval == 0 || j % interval == 0) {
+                    imageWriter.writePixel(i, j, color);
+                }
+            }
+        }
+        return this;
+    }
+
     /**
-     * Builder class to construct {@link Camera} instances using chained methods.
+     * Writes the image to a file with the specified name.
+     *
+     * @param fileName the name of the file to write the image to
+     * @return this Camera object
      */
+    public Camera writeToImage(String fileName) {
+        imageWriter.writeToImage(fileName);
+        return this;
+    }
+
+    /**
+     * Writes the color to the pixel.
+     */
+    private void castRay(int x, int y) {
+        Ray ray = constructRay(Nx, Ny, x, y);
+        Color color = rayTracer.traceRay(ray);
+        imageWriter.writePixel(x, y, color);
+
+    }
+        /**
+         * Builder class to construct {@link Camera} instances using chained methods.
+         */
     public static class Builder {
 
         private final Camera camera = new Camera();
@@ -173,17 +218,27 @@ public class Camera implements Cloneable {
             return this;
         }
 
+        /**
+         * Sets the resolution of the camera.
+         *
+         * @param nX the number of pixels in the x direction
+         * @param nY the number of pixels in the y direction
+         */
         public Builder setResolution(int nX, int nY) {
             camera.imageWriter = new ImageWriter(nX, nY);
+            camera.Nx = nX;
+            camera.Ny = nY;
             return this;
         }
 
         public Builder setRayTracer(Scene scene, RayTracerType rayTracerType) {
-            if (rayTracerType == RayTracerType.SIMPLE) {
-                camera.rayTracer = new SimpleRayTracer(scene);
-
-            } else {
-                camera.rayTracer = null;
+            switch (rayTracerType) {
+                case SIMPLE:
+                    camera.rayTracer = new SimpleRayTracer(scene);
+                    break;
+                default:
+                    camera.rayTracer = null;
+                    //throw new IllegalArgumentException("Invalid ray tracer type");
             }
             return this;
         }
@@ -222,6 +277,11 @@ public class Camera implements Cloneable {
                     !isZero(camera.vRight.length() - 1) ||
                     !isZero(camera.vUp.length() - 1)) {
                 throw new IllegalArgumentException("The 3 vectors must be normalized");
+            }
+            if(camera.Nx <= 0) throw new MissingResourceException(description, className, "nX");
+            if(camera.Ny <= 0) throw new MissingResourceException(description, className, "ny");
+            if(camera.rayTracer == null){
+                camera.rayTracer = new SimpleRayTracer(null);
             }
 
             try {
