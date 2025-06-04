@@ -60,8 +60,14 @@ public class Camera implements Cloneable {
         double Yi = -(i - (nY - 1) / 2d) * Ry;
         double Xj = (j - (nX - 1) / 2d) * Rx;
 
-        if (!isZero(Xj)) pIJ = pIJ.add(vRight.scale(Xj));
-        if (!isZero(Yi)) pIJ = pIJ.add(vUp.scale(Yi));
+        if (!isZero(Xj))
+        {
+            pIJ = pIJ.add(vRight.scale(Xj));
+        }
+        if (!isZero(Yi))
+        {
+            pIJ = pIJ.add(vUp.scale(Yi));
+        }
 
         pIJ = pIJ.add(vTo.scale(distance));
 
