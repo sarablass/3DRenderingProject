@@ -4,7 +4,7 @@ package geometries;
  * Represents a geometric object with a radius.
  * This class serves as a base class for radial geometries.
  */
-public abstract class RadialGeometry implements Geometry {
+public abstract class RadialGeometry extends Geometry {
     /**
      * The radius of the geometric object.
      */

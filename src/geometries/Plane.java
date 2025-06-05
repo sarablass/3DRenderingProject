@@ -13,7 +13,7 @@ import static primitives.Util.isZero;
  * Represents a plane in three-dimensional space.
  * The class is immutable.
  */
-public class Plane implements Geometry {
+public class Plane extends Geometry {
     /**
      * A reference point on the plane.
      */
@@ -58,7 +58,7 @@ public class Plane implements Geometry {
      * @return a list of intersection points, or null if there are no intersections
      */
     @Override
-    public List<Point> findIntersections(Ray ray) {
+    public List<Intersection> calculateIntersectionsHelper(Ray ray) {
 
         if (q.equals(ray.getHead())) { // if the ray starts from the plane it doesn't cut the plane at all
             return null;
@@ -69,12 +69,13 @@ public class Plane implements Geometry {
         }
         double t = alignZero(normal.dotProduct(q.subtract(ray.getHead())) / nv);
         if (t > 0) {
-            return List.of(ray.getPoint(t));
+            return List.of(new Intersection(this,ray.getPoint(t)));
         } else {
             return null;
 
         }
     }
+
 
     /**
      * Returns the normal vector of the plane.

@@ -6,6 +6,8 @@ import primitives.Vector;
 
 import java.util.List;
 
+import static primitives.Util.isZero;
+
 /**
  * Represents a triangle in 3D space.
  * A triangle is a special case of a polygon with exactly three vertices.
@@ -22,23 +24,38 @@ public class Triangle extends Polygon {
         super(p1, p2, p3); // Calls the constructor of Polygon
     }
     @Override
-    public List<Point> findIntersections(Ray ray) {
+    public List<Intersection> calculateIntersectionsHelper(Ray ray) {
 
-        List<Point> p = plane.findIntersections(ray); // Find the intersection point with the plane
-        if (p == null) {
-            return null;
+        // Find the intersection point with the plane of the triangle
+        Point p1 = vertices.get(0);
+        Point p2 = vertices.get(1);
+        Point p3 = vertices.get(2);
+        // Calculate the normal to the plane
+        Vector ab = p2.subtract(p1);
+        Vector ac = p3.subtract(p1);
+        Vector n = ab.crossProduct(ac);
+
+        double nd = n.dotProduct(ray.getDirection());
+        if (isZero(nd)) {
+            return null; // The ray is parallel to the plane of the triangle
         }
 
-        Point intersectionPoint = p.get(0);
+        double t = n.dotProduct(p1.subtract(ray.getPoint(0))) / nd;
+        if (t < 0) {
+            return null; // The intersection is behind the ray's origin
+        }
+
+        Point intersectionPoint = ray.getPoint(t);
+
         // Check if the intersection point is a vertex of the triangle
-        if (intersectionPoint.equals(vertices.get(0)) ||
-                intersectionPoint.equals(vertices.get(1)) ||
-                intersectionPoint.equals(vertices.get(2))) {
+        if (intersectionPoint.equals(p1) ||
+                intersectionPoint.equals(p2) ||
+                intersectionPoint.equals(p3)) {
             return null;
         }
         // Check if the intersection point is inside the triangle
-        if (isPointInTriangle(intersectionPoint, vertices.get(0), vertices.get(1), vertices.get(2))) {
-            return p;
+        if (isPointInTriangle(intersectionPoint, p1, p2, p3)) {
+            return List.of(new Intersection(this,intersectionPoint));
         }
 
         return null;

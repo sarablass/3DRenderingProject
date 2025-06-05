@@ -11,7 +11,7 @@ import primitives.*;
  * system
  * @author Dan
  */
-public class Polygon implements Geometry {
+public class Polygon extends Geometry {
    /** List of polygon's vertices */
    protected final List<Point> vertices;
    /** Associated plane in which the polygon lays */
@@ -79,7 +79,7 @@ public class Polygon implements Geometry {
    }
 
    @Override
-   public List<Point> findIntersections(Ray ray) {
+   public List<Intersection> calculateIntersectionsHelper(Ray ray) {
       //check if the ray intersects the plane of the polygon- the polygon is on a plane
       Plane plane = new Plane(vertices.get(0), vertices.get(1), vertices.get(2));
       List<Point> intersections = plane.findIntersections(ray);
@@ -105,7 +105,7 @@ public class Polygon implements Geometry {
          }
       }
       //if all dot products are positive, the point is inside the polygon
-      return intersections;
+      return List.of(new Intersection(this, p));
    }
    @Override
    public Vector getNormal(Point point) { return plane.getNormal(point); }

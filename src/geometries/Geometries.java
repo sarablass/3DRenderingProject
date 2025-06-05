@@ -7,35 +7,61 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-public class Geometries implements Intersectable{
+/**
+ * The Geometries class represents a collection of intersectable geometries in a 3D Cartesian coordinate system.
+ * It implements the Composite Design Pattern, allowing multiple geometries to be treated as a single entity.
+ * This class also implements the Intersectable interface to find intersections of a ray with the geometries.
+ */
+public class Geometries extends Intersectable{
 
 
+    /**
+     * A list containing all the geometries in the collection.
+     */
     List<Intersectable> geometries= new LinkedList<Intersectable>();
+    /**
+     * Default constructor that initializes an empty collection of geometries.
+     */
     public Geometries(){}
+    /**
+     * Constructor that initializes the collection with the given geometries.
+     *
+     * @param geometries one or more geometries to add to the collection
+     */
     public Geometries(Intersectable... geometries) {
         add(geometries);
     }
 
+    /**
+     * Adds one or more geometries to the collection.
+     *
+     * @param geometries one or more geometries to add
+     */
     public void add(Intersectable... geometries) {
         Collections.addAll(this.geometries, geometries); //add all the geometries to the list
     }
 
+    /**
+     * Finds the intersections of a ray with all geometries in the list.
+     *
+     * @param ray the ray to find intersections with
+     * @return a list of intersection points
+     */
     @Override
-    public List<Point> findIntersections(Ray ray) {
-        List<Point> result = null;
+    public List<Intersection> calculateIntersectionsHelper(Ray ray) {
+        List<Intersection> intersections = null;
         for (Intersectable geometry : geometries) {
-            if(geometry.findIntersections(ray)!=null){
-                List<Point> tempIntersections = geometry.findIntersections(ray);
-                if (tempIntersections != null) {
-                    if (result == null) {
-                        result = new LinkedList<>();
-                    }
-                    result.addAll(tempIntersections);
+            List<Intersection> geoIntersections = geometry.calculateIntersectionsHelper(ray);
+            if (geoIntersections != null) {
+                if (intersections == null) {
+                    intersections = new LinkedList<>();
                 }
+                intersections.addAll(geoIntersections);
             }
         }
-
-
-        return result;
+        return intersections;
     }
 }
+
+
+
