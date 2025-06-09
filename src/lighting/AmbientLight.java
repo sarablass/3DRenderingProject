@@ -3,8 +3,7 @@ package lighting;
 import primitives.Color;
 import primitives.Double3;
 
-public class AmbientLight {
-    private final Color intensity; // The light color
+public class AmbientLight extends Light {
     public static final AmbientLight NONE = new AmbientLight(Color.BLACK);
 
     /**
@@ -14,14 +13,7 @@ public class AmbientLight {
      * @param Ia The base color of the ambient light.
      */
     public AmbientLight(Color Ia) {
-        this.intensity = Ia;
+          super(Ia);
     }
 
-    /**
-     * Returns the light intensity factor.
-     * @return The light intensity factor.
-     */
-    public Color getIntensity() {
-        return intensity;
-    }
 }
