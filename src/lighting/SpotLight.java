@@ -19,6 +19,17 @@ public class SpotLight extends PointLight{
     private Double narrowBeam = 1d;
 
     /**
+     * get intensity of the light at a specific point
+     * @param color color of the light
+     * @param direction direction of the light
+     * @param position position of the light source
+     */
+    public SpotLight(Color color, Point position,Vector direction) {
+        super(color, position);
+        this.direction = direction.normalize();
+    }
+
+    /**
      * Sets the constant attenuation factor of the light.
      *
      * @param kC the constant attenuation factor
@@ -65,17 +76,6 @@ public class SpotLight extends PointLight{
     }
 
     /**
-     * get intensity of the light at a specific point
-     * @param color color of the light
-     * @param direction direction of the light
-     * @param position position of the light source
-     */
-    public SpotLight(Color color, Point position,Vector direction) {
-        super(color, position);
-        this.direction = direction.normalize();
-    }
-
-    /**
      * Calculates the intensity of the light at a specific point.
      * The intensity is affected by the direction of the light and the narrow beam factor.
      *
@@ -96,7 +96,5 @@ public class SpotLight extends PointLight{
     public Vector getL(Point p){
         return super.getL(p).normalize();
     }
-//    public double getDistance(Point p1){
-//        return position.distance(p1);
-//    }
+
 }

@@ -7,7 +7,7 @@ import primitives.Point;
 import primitives.Ray;
 import static primitives.Util.alignZero;
 import java.util.List;
-
+import material.Material;
 /**
  * SimpleRayTracer class represents a simple ray tracer.
  * A simple ray tracer is a ray tracer that does not perform any ray tracing.
@@ -28,12 +28,9 @@ public class SimpleRayTracer extends RayTracerBase{
      */
     @Override
     public Color traceRay(Ray ray) {
-        List<Intersection> intersections  = this.scene.geometries.calculateIntersections(ray);
-
-        if (intersections == null)
-            return this.scene.background;
-
-        return calcColor(ray.findClosestIntersection(intersections), ray);
+        var intersections = scene.geometries.calculateIntersections(ray);return intersections == null
+                ? scene.background
+                : calcColor(ray.findClosestIntersection(intersections), ray);
     }
     /**
      * Get the color of an intersection point
@@ -41,7 +38,9 @@ public class SimpleRayTracer extends RayTracerBase{
      * @return Color of the intersection point
      */
     private Color calcColor(Intersection intersection, Ray ray) {
-        return this.scene.ambientLight.getIntensity();
+        if (preprocessIntersection(intersection, ray.getDirection()))return Color.BLACK;
+        return scene
+                .ambientLight.getIntensity().scale(intersection.material.kA).add(calcLocalEffects(intersection));
 
     }
 
