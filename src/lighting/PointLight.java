@@ -56,7 +56,7 @@ public class PointLight extends Light implements LightSource {
         // The intensity of the color of the light
         // is proportional to squared distance
         double d = position.distance(p);
-        return intensity.reduce((int)(kC + kL * d + kQ * d * d));
+        return intensity.scale(1/(kC + kL * d + kQ * d * d));
 
     }
 
