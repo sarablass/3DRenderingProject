@@ -199,5 +199,46 @@ class LightsTests {
          .renderImage() //
          .writeToImage("lightTrianglesSpotSharp");
    }
+   /** Produce a glowing and dramatic image of a sphere with multiple light sources */
+   @Test
+   void sphereMultipleSoftLights() {
+      scene1.geometries.add(sphere);
 
+      // Directional light - רך, כחול-סגלגל
+      scene1.lights.add(new DirectionalLight(new Color(200, 200, 500), new Vector(-1, -1, -1)));
+
+      // Point light - חזק מאוד, אור חם ממוקם קרוב לכדור
+      scene1.lights.add(new PointLight(new Color(1000, 600, 300), new Point(40, 40, 20))
+              .setKl(0.0004).setKq(0.00005));
+
+      // Spot light - תוספת תאורה סגול-אדום בכיוון נגדי
+      scene1.lights.add(new SpotLight(new Color(500, 300, 700), new Point(-60, -30, 50), new Vector(1, 1, -1))
+              .setKl(0.001).setKq(0.0001).setNarrowBeam(15));
+
+      camera1.setResolution(500, 500)
+              .build()
+              .renderImage()
+              .writeToImage("lightSphereMultipleSoftLights");
+   }
+   /** Warm orange sunset-style lighting for two angled triangles */
+   @Test
+   void trianglesWarmOrangeLighting() {
+      scene2.geometries.add(triangle1, triangle2);
+
+      // Directional light – אור שמש עמום בגוון כתום-צהבהב, מגיע בזווית אחורית-צידית
+      scene2.lights.add(new DirectionalLight(new Color(400, 300, 100), new Vector(-1, -1, -0.5)));
+
+      // Point light – אור כתום רך שמגיע מהצד, יוצר הארה הדרגתית על החלק המרכזי
+      scene2.lights.add(new PointLight(new Color(700, 400, 200), new Point(50, 30, -90))
+              .setKl(0.0006).setKq(0.0001));
+
+      // Spot light – אור אדום-כתום עמוק, קרן צרה שפוגעת בזווית קדמית על הקצה של המשולש
+      scene2.lights.add(new SpotLight(new Color(900, 300, 100), new Point(-60, 20, 0), new Vector(2, -1.5, -2))
+              .setKl(0.0005).setKq(0.00008).setNarrowBeam(15));
+
+      camera2.setResolution(500, 500)
+              .build()
+              .renderImage()
+              .writeToImage("lightTrianglesWarmOrange");
+   }
 }

@@ -3,6 +3,7 @@ package geometries;
 import primitives.*;
 
 import java.util.List;
+import lighting.LightSource;
 
 public abstract class Intersectable {
     /**
@@ -19,9 +20,18 @@ public abstract class Intersectable {
     public static class Intersection {
         public final Geometry geometry;
         public final Point point;
+        public final Material material;
+        public Vector normal;
+        public Vector v;
+        public double vNormal;
+        public LightSource light;
+        public Vector l;
+        public double lNormal;
+
         public Intersection(Geometry geometry, Point point) {
             this.geometry = geometry;
             this.point = point;
+            this.material = geometry != null ? geometry.getMaterial() : null;
         }
         @Override
         public boolean equals(Object o) {

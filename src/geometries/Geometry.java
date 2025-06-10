@@ -4,6 +4,8 @@ import primitives.Point;
 import primitives.Vector;
 import primitives.Color;
 import primitives.Material;
+import primitives.Color;
+
 
 /**
  * The Geometry interface represents a geometric shape in 3D space.

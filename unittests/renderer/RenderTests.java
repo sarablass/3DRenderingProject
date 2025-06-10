@@ -51,6 +51,10 @@ class RenderTests {
               .writeToImage("Two color render test");
    }
 
+
+
+
+
    // For stage 6 - please disregard in stage 5
    /**
     * Produce a scene with basic 3D model - including individual lights of the
@@ -61,7 +65,7 @@ class RenderTests {
       Scene scene = new Scene("Multi color").setAmbientLight(new AmbientLight(new Color(51, 51, 51)));
       scene.geometries //
               .add(// center
-                      new Sphere(new Point(0, 0, -100), 50),
+                      new Sphere( new Point(0, 0, -100),50),
                       // up left
                       new Triangle(new Point(-100, 0, -100), new Point(0, 100, -100), new Point(-100, 100, -100)) //
                               .setEmission(new Color(GREEN)),
@@ -71,8 +75,6 @@ class RenderTests {
                       // down right
                       new Triangle(new Point(100, 0, -100), new Point(0, -100, -100), new Point(100, -100, -100)) //
                               .setEmission(new Color(BLUE)));
-    //  scene.setAmbientLight(new AmbientLight(new Color(WHITE), new Double3(0.2, 0.2, 0.2))); //
-
 
       camera //
               .setRayTracer(scene, RayTracerType.SIMPLE) //
@@ -146,4 +148,7 @@ class RenderTests {
               .printGrid(100, new Color(WHITE)) //
               .writeToImage("Multi color and light");
    }
+
 }
+
+
