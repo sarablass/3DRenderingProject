@@ -28,20 +28,47 @@ public abstract class Intersectable {
         public Vector l;
         public double lNormal;
 
+        /**
+         * Constructs an `Intersection` object with the specified geometry and point.
+         *
+         * @param geometry The geometry that was intersected.
+         * @param point    The intersection point on the geometry.
+         */
         public Intersection(Geometry geometry, Point point) {
             this.geometry = geometry;
             this.point = point;
-            this.material = geometry != null ? geometry.getMaterial() : null;
+            if (geometry != null) {
+                this.material = geometry.getMaterial();
+            } else {
+                this.material = null;
+            }
         }
+
+        /**
+         * Checks if this intersection is equal to another object.
+         * <p>
+         * Two intersections are considered equal if they have the same geometry
+         * and the same intersection point.
+         *
+         * @param o The object to compare with this intersection.
+         * @return True if the objects are equal, false otherwise.
+         */
         @Override
         public boolean equals(Object o) {
             if (this == o) return true;
-            if (!(o instanceof Intersection intersection)) return false;
-            return point.equals(intersection.point) && geometry.equals(intersection.geometry);
+            if (!(o instanceof Intersection)) return false;
+            return ((Intersection) o).geometry == geometry &&
+                    ((Intersection) o).point.equals(point);
         }
+
+        /**
+         * Returns a string representation of the intersection.
+         *
+         * @return A string describing the intersection.
+         */
         @Override
         public String toString() {
-            return "Intersectable{" +
+            return "Intersection{" +
                     "geometry=" + geometry +
                     ", point=" + point +
                     '}';

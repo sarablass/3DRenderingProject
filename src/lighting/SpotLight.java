@@ -19,52 +19,6 @@ public class SpotLight extends PointLight{
     private Double narrowBeam = 1d;
 
     /**
-     * Sets the constant attenuation factor of the light.
-     *
-     * @param kC the constant attenuation factor
-     * @return the current SpotLight instance
-     */
-    @Override
-    public SpotLight setKc(double kC) {
-        super.setKc(kC);
-        return this;
-    }
-
-    /**
-     * Sets the linear attenuation factor of the light.
-     *
-     * @param kL the linear attenuation factor
-     * @return the current SpotLight instance
-     */
-    @Override
-    public SpotLight setKl(double kL) {
-        super.setKl(kL);
-        return this;
-    }
-
-    /**
-     * Sets the quadratic attenuation factor of the light.
-     *
-     * @param kQ the quadratic attenuation factor
-     * @return the current SpotLight instance
-     */
-    @Override
-    public SpotLight setKq(double kQ) {
-        super.setKq(kQ);
-        return this;
-    }
-
-    /**
-     * set the narrow beam of the light
-     * @param narrowBeam the narrow beam of the light
-     * @return the light source
-     */
-    public SpotLight setNarrowBeam(double narrowBeam) {
-        this.narrowBeam = narrowBeam;
-        return this;
-    }
-
-    /**
      * get intensity of the light at a specific point
      * @param color color of the light
      * @param direction direction of the light
@@ -72,25 +26,58 @@ public class SpotLight extends PointLight{
      */
     public SpotLight(Color color, Point position,Vector direction) {
         super(color, position);
-        this.direction = direction.normalize();
+        this.direction = direction;
     }
 
     /**
-     * Calculates the intensity of the light at a specific point.
-     * The intensity is affected by the direction of the light and the narrow beam factor.
+     * Sets the constant attenuation factor.
      *
-     * @param point the point at which to calculate the light intensity
-     * @return the color representing the light intensity at the specified point
+     * @param kC The constant attenuation factor.
+     * @return The current `SpotLight` instance (for method chaining).
      */
     @Override
-    public Color getIntensity(Point point) {
-        Vector l = getL(point);
-//        double dirDot = l.dotProduct(direction.scale(-1));
-        double dirDot = l.dotProduct(direction);
-        double intensityFactor =Math.max(0d, dirDot);
-        intensityFactor = Math.pow(intensityFactor, narrowBeam);
-        return super.getIntensity(point).scale(intensityFactor);
-
+    public SpotLight setKc(double kC) {
+        return (SpotLight) super.setKc(kC); // Call the parent method and cast the result
     }
 
+
+    /**
+     * Sets the linear attenuation factor.
+     *
+     * @param kL The linear attenuation factor.
+     * @return The current `SpotLight` instance (for method chaining).
+     */
+    @Override
+    public SpotLight setKl(double kL) {
+        return (SpotLight) super.setKl(kL); // Call the parent method and cast the result
+    }
+
+    /**
+     * Sets the quadratic attenuation factor.
+     *
+     * @param kQ The quadratic attenuation factor.
+     * @return The current `SpotLight` instance (for method chaining).
+     */
+    @Override
+    public SpotLight setKq(double kQ) {
+        return (SpotLight) super.setKq(kQ); // Call the parent method and cast the result
+    }
+
+    /**
+     * Returns the intensity of the light at a given point.
+     * <p>
+     * The intensity is calculated based on the distance from the light source to the point,
+     * the attenuation factors, and the angle between the spotlight's direction and the direction
+     * to the point.
+     *
+     * @param p The point at which the light intensity is calculated.
+     * @return The intensity (color) of the light at the given point.
+     */
+    @Override
+    public Color getIntensity(Point p) {
+        // Calculate the factor based on the angle between the spotlight's direction and the direction to the point
+        double factor = Math.max(0, direction.normalize().dotProduct(getL(p)));
+        // Scale the parent class's intensity by the factor
+        return super.getIntensity(p).scale(factor);
+    }
 }
