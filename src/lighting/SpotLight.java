@@ -64,19 +64,20 @@ public class SpotLight extends PointLight{
     }
 
     /**
-     * Returns the intensity of the light at a given point.
-     * <p>
-     * The intensity is calculated based on the distance from the light source to the point,
-     * the attenuation factors, and the angle between the spotlight's direction and the direction
-     * to the point.
-     *
-     * @param p The point at which the light intensity is calculated.
-     * @return The intensity (color) of the light at the given point.
+     * set the narrow beam of the light
+     * @param narrowBeam the narrow beam of the light
+     * @return the light source
      */
+    public SpotLight setNarrowBeam(double narrowBeam) {
+        this.narrowBeam = narrowBeam;
+        return this;
+    }
+
     @Override
     public Color getIntensity(Point p) {
         // Calculate the factor based on the angle between the spotlight's direction and the direction to the point
         double factor = Math.max(0, direction.normalize().dotProduct(getL(p)));
+        factor= Math.pow(factor, narrowBeam); // Apply the narrow beam effect
         // Scale the parent class's intensity by the factor
         return super.getIntensity(p).scale(factor);
     }

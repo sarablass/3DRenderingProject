@@ -51,16 +51,6 @@ public class PointLight extends Light implements LightSource {
         return this;
     }
 
-
-    /**
-     * Returns the intensity of the light at a given point.
-     * <p>
-     * The intensity is calculated based on the distance from the light source to the point
-     * and the attenuation factors.
-     *
-     * @param p The point at which the light intensity is calculated.
-     * @return The intensity (color) of the light at the given point.
-     */
     @Override
     public Color getIntensity(Point p) {
         double d = position.distance(p); // Calculate the distance to the point

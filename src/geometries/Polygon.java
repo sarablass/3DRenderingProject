@@ -107,6 +107,7 @@ public class Polygon extends Geometry {
       //if all dot products are positive, the point is inside the polygon
       return List.of(new Intersection(this, p));
    }
+
    @Override
    public Vector getNormal(Point point) { return plane.getNormal(point); }
 

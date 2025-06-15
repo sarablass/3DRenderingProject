@@ -152,7 +152,7 @@ class RenderTests {
               .build() //
               .renderImage() //
               .printGrid(100, new Color(WHITE)) //
-              .writeToImage("Multi color and light");
+              .writeToImage("multi color and light");
    }
 
 }

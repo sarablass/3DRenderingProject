@@ -5,6 +5,10 @@ import primitives.*;
 import java.util.List;
 import lighting.LightSource;
 
+/**
+ * Abstract class representing an object in the scene that can be intersected by a ray.
+ * Provides a framework for calculating intersection points between rays and geometries.
+ */
 public abstract class Intersectable {
     /**
      * This method is used to find the intersection points of a ray with the geometry.
@@ -12,11 +16,14 @@ public abstract class Intersectable {
      * @param ray The ray to check for intersections.
      * @return A list of intersection points.
      */
-
     public final List<Point> findIntersections(Ray ray) {
         var list = calculateIntersections(ray);
         return list == null ? null : list.stream().map(intersection -> intersection.point).toList();
     }
+    /**
+     * Represents an intersection between a ray and a geometry,
+     * including additional data used for shading calculations.
+     */
     public static class Intersection {
         public final Geometry geometry;
         public final Point point;
@@ -74,7 +81,22 @@ public abstract class Intersectable {
                     '}';
         }
     }
+
+    /**
+     * Abstract method to be implemented by concrete geometries.
+     * Computes detailed intersection data between the given ray and the geometry.
+     *
+     * @param ray The ray to test for intersection.
+     * @return A list of detailed intersection objects, or null if no intersection occurs.
+     */
     protected abstract List<Intersection> calculateIntersectionsHelper(Ray ray);
+
+    /**
+     * Calls the internal helper method to compute intersection data.
+     *
+     * @param ray The ray to test for intersection.
+     * @return A list of detailed intersection objects, or null if no intersection occurs.
+     */
     public final List<Intersection> calculateIntersections(Ray ray){
         return calculateIntersectionsHelper(ray);
     }

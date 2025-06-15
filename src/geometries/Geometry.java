@@ -14,6 +14,7 @@ public abstract class Geometry extends Intersectable {
 
     protected Color emission= new Color(java.awt.Color.BLACK);
     private Material material= new Material();
+
     /**
      * Computes and returns the normal vector to the geometry at a given point.
      * @param p The point at which to compute the normal vector.

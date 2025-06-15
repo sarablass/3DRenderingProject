@@ -34,12 +34,6 @@ public class Tube extends RadialGeometry {
         return null;
     }
 
-    /**
-     * Calculates the normal vector to the tube at the specified point.
-     *
-     * @param p The point on the surface of the tube.
-     * @return The normal vector to the tube at the specified point, which is null.
-     */
     public Vector getNormal(Point p) {
 
         // Calculate the vector from the base point of the axis to the given point

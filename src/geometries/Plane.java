@@ -51,12 +51,6 @@ public class Plane extends Geometry {
         this.normal = normal.normalize(); // Ensure the normal is stored as a normalized vector
     }
 
-    /**
-     * Finds the intersection points of a given ray with the plane.
-     *
-     * @param ray the ray to intersect with the plane
-     * @return a list of intersection points, or null if there are no intersections
-     */
     @Override
     public List<Intersection> calculateIntersectionsHelper(Ray ray) {
 
@@ -76,13 +70,6 @@ public class Plane extends Geometry {
         }
     }
 
-
-    /**
-     * Returns the normal vector of the plane.
-     *
-     * @param point a point on the plane (not used in this implementation as the normal is the same for all points)
-     * @return the normal vector of the plane
-     */
     @Override
     public Vector getNormal(Point point) {
         return normal;

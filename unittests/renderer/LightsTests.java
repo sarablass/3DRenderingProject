@@ -174,8 +174,12 @@ class LightsTests {
               .writeToImage("lightTrianglesSpot");
    }
 
+   /**
+    * Produce a picture of a sphere lighted by a combination of colorful point lights and a directional light.
+    * Demonstrates complex lighting effects and interactions with multiple sources on a sphere.
+    */
    @Test
-   void sphereColorfulLights() {
+   void sphereMultipleLights() {
       scene1.geometries.add(sphere);
 
       scene1.lights.add(new PointLight(
@@ -193,13 +197,11 @@ class LightsTests {
               new Point(-70, 50, 100)
       ).setKl(0.001).setKq(0.0002));
 
-      // אור כיווני סגול (תורם לרקע וצללים)
       scene1.lights.add(new DirectionalLight(
               new Color(400, 0, 400),
               new Vector(-1, -1, -1)
       ));
 
-      // הגדרות המצלמה
       camera1
               .setResolution(500, 500)
               .build()
@@ -207,9 +209,12 @@ class LightsTests {
               .writeToImage("multiSphereLights");
    }
 
-
+   /**
+    * Produce a picture of two triangles lighted by a combination of directional, point, and spot lights.
+    * Demonstrates enhanced lighting effects and interactions with multiple sources.
+    */
    @Test
-   void trianglesLightsBeautiful2() {
+   void trianglesMultipleLights() {
       scene2.geometries.add(triangle1, triangle2);
 
       scene2.lights.add(new DirectionalLight(
@@ -233,5 +238,32 @@ class LightsTests {
               .build()
               .renderImage()
               .writeToImage("multiTriangleLights");
+   }
+
+   /** Produce a picture of a sphere lighted by a narrow spotlight */
+   @Test
+   void sphereSpotSharp() {
+      scene1.geometries.add(sphere);
+      scene1.lights
+              .add(new SpotLight(sphereLightColor, sphereLightPosition, new Vector(1, 1, -0.5)) //
+                      .setKl(0.001).setKq(0.00004).setNarrowBeam(10));
+
+      camera1.setResolution(500, 500) //
+              .build() //
+              .renderImage() //
+              .writeToImage("lightSphereSpotSharp");
+   }
+
+   /** Produce a picture of two triangles lighted by a narrow spotlight */
+   @Test
+   void trianglesSpotSharp() {
+      scene2.geometries.add(triangle1, triangle2);
+      scene2.lights.add(new SpotLight(trianglesLightColor, trianglesLightPosition, trianglesLightDirection) //
+              .setKl(0.001).setKq(0.00004).setNarrowBeam(10));
+
+      camera2.setResolution(500, 500) //
+              .build() //
+              .renderImage() //
+              .writeToImage("lightTrianglesSpotSharp");
    }
 }
