@@ -40,7 +40,6 @@ public class SpotLight extends PointLight{
         return (SpotLight) super.setKc(kC); // Call the parent method and cast the result
     }
 
-
     /**
      * Sets the linear attenuation factor.
      *

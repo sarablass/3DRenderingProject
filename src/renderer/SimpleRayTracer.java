@@ -15,6 +15,7 @@ import static java.lang.Math.*;
  * by finding intersections and applying local lighting models (diffuse and specular).
  */
 public class SimpleRayTracer extends RayTracerBase{
+    private static final double DELTA = 0.1;
 
     /**
      * Constructs a SimpleRayTracer object with the given scene.
@@ -98,6 +99,9 @@ public class SimpleRayTracer extends RayTracerBase{
                 if(!setLightSource(intersection, lightSource)) {
                     continue;
                 }
+                if (!unshaded(intersection)) {
+                    continue; // Skip this light if the point is in shadow
+                }
                 // Compute light intensity at the intersection point
                 Color iL = lightSource.getIntensity(intersection.point);
                 // Add contribution from diffusive and specular effects
@@ -135,6 +139,37 @@ public class SimpleRayTracer extends RayTracerBase{
         }
         return intersection.material.kD.scale(intersection.lNormal);
     }
+
+    /**
+     * Checks whether the intersection point is unshaded (i.e., visible to the light source).
+     * It casts a shadow ray toward the light and verifies if any geometry obstructs the light.
+     *
+     * @param intersection The intersection to test.
+     * @return True if no geometry obstructs the light (unshaded), false if in shadow.
+     */
+    private boolean unshaded(Intersection intersection) {
+        Vector lightDirection = intersection.l.scale(-1); // From point to light source
+        Vector delta = intersection.normal.scale(intersection.lNormal < 0 ? DELTA : -DELTA);
+        Point shadowRayOrigin = intersection.point.add(delta);
+        Ray shadowRay = new Ray(shadowRayOrigin, lightDirection);
+
+        List<Intersection> shadowIntersections = scene.geometries.calculateIntersectionsHelper(shadowRay);
+        if (shadowIntersections == null) {
+            return true; // No obstacles found
+        }
+
+        double lightDistance = intersection.light.getDistance(intersection.point);
+
+        for (Intersection shadowIntersection : shadowIntersections) {
+            double distanceToShadowPoint = shadowIntersection.point.distance(intersection.point);
+            if (alignZero(distanceToShadowPoint - lightDistance) <= 0) {
+                return false; // An object is blocking the light
+            }
+        }
+        return true; // No object blocks the light within distance
+    }
+
+
 }
 
 
