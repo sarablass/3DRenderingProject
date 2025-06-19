@@ -2,6 +2,8 @@ package primitives;
 
 import java.util.List;
 import geometries.Intersectable.Intersection;
+
+import static primitives.Util.alignZero;
 import static primitives.Util.isZero;
 
 /**
@@ -10,6 +12,7 @@ import static primitives.Util.isZero;
 public class Ray {
     private final Point head;
     private final Vector direction;
+    private static final double DELTA = 0.1; // A small delta value to avoid self-intersection issues
 
     /**
      * Constructs a Ray with a given head point and direction vector.
@@ -23,6 +26,24 @@ public class Ray {
         this.head = head;
         this.direction = direction.normalize();
     }
+
+    /**
+     * Constructs a new {@code Ray} with a given starting point, direction vector, and normal vector.
+     * <p>
+     * This constructor adjusts the starting point slightly along the normal vector to avoid
+     * self-intersection issues in geometric calculations.
+     *
+     * @param head      the starting point of the ray
+     * @param direction the direction vector of the ray (will be normalized)
+     * @param normal    the normal vector used to adjust the starting point
+     */
+    public Ray(Point head, Vector direction, Vector normal) {
+        double dot = alignZero(direction.dotProduct(normal));
+        double scaleFactor = (dot > 0 ? DELTA : -DELTA);
+        this.head = head.add(normal.scale(scaleFactor));
+        this.direction = direction.normalize();
+    }
+
     /**
      * Returns the head (starting point) of the ray.
      *

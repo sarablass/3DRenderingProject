@@ -219,7 +219,7 @@ class LightsTests {
 
       scene2.lights.add(new DirectionalLight(
               new Color(700, 700, 900),
-              new Vector(0, -1, -1)
+              new Vector(-2, -2, -2)
       ));
 
       scene2.lights.add(new PointLight(
