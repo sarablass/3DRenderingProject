@@ -8,6 +8,7 @@ import geometries.*;
 import lighting.*;
 import primitives.*;
 import scene.Scene;
+import renderer.SamplingType;
 
 /**
  * Tests for reflection and transparency functionality, test for partial
@@ -194,6 +195,7 @@ class ReflectionRefractionTests {
               .setDirection(new Point(0, -50, -150), Vector.AXIS_Y) // Pointing to scene center
               .setVpDistance(800).setVpSize(400, 400)
               .setResolution(1000, 1000)
+              .setAntiAliasing(SamplingType.GRID, 3) // Using jittered sampling for better quality
               .build()
               .renderImage()
               .writeToImage("enhancedHouseSceneWithAllEffects");

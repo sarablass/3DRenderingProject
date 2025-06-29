@@ -6,11 +6,11 @@ import primitives.Color;
 import primitives.Point;
 import primitives.Ray;
 import primitives.Vector;
+import primitives.Point2D;
 import scene.Scene;
 
+import java.util.List;
 import java.util.MissingResourceException;
-
-import static primitives.Util.isZero;
 
 /**
  * The {@code Camera} class represents a virtual camera in 3D space,
@@ -27,7 +27,9 @@ public class Camera implements Cloneable {
     private int Nx = 1;
     private int Ny = 1;
 
-
+    // Anti-aliasing fields
+    private boolean antiAliasingEnabled = false;
+    private Blackboard blackboard;
 
     /**
      * Private constructor to enforce the use of the Builder pattern.
@@ -60,12 +62,10 @@ public class Camera implements Cloneable {
         double Yi = -(i - (nY - 1) / 2d) * Ry;
         double Xj = (j - (nX - 1) / 2d) * Rx;
 
-        if (!isZero(Xj))
-        {
+        if (!isZero(Xj)) {
             pIJ = pIJ.add(vRight.scale(Xj));
         }
-        if (!isZero(Yi))
-        {
+        if (!isZero(Yi)) {
             pIJ = pIJ.add(vUp.scale(Yi));
         }
 
@@ -74,14 +74,28 @@ public class Camera implements Cloneable {
         return new Ray(p0, pIJ.subtract(p0).normalize());
     }
 
+//    public Camera renderImage() {
+//        for (int i = 0; i < Nx; i++) {
+//            for (int j = 0; j < Ny; j++) {
+//                castRay(i, j);
+//            }
+//        }
+//        return this;
+//    }
+
     public Camera renderImage() {
-        for (int i = 0; i < Nx; i++) {
-            for (int j = 0; j < Ny; j++) {
-                castRay(i,j);
+        for (int i = 0; i < Ny; i++) {
+            for (int j = 0; j <Nx ; j++) {
+                if (antiAliasingEnabled && blackboard != null) {
+                    castRayWithAntiAliasing(i,j);
+                } else {
+                    castRay(i, j);
+                }
             }
         }
         return this;
     }
+
 
     public Camera printGrid(int interval, Color color) {
         for (int i = 0; i < Nx; i++) {
@@ -114,9 +128,10 @@ public class Camera implements Cloneable {
         imageWriter.writePixel(x, y, color);
 
     }
-        /**
-         * Builder class to construct {@link Camera} instances using chained methods.
-         */
+
+    /**
+     * Builder class to construct {@link Camera} instances using chained methods.
+     */
     public static class Builder {
 
         private final Camera camera = new Camera();
@@ -249,6 +264,25 @@ public class Camera implements Cloneable {
             return this;
         }
 
+        public Builder setAntiAliasing(SamplingType samplingType, int resolution) {
+            if (resolution <= 0) {
+                throw new IllegalArgumentException("Anti-aliasing resolution must be positive");
+            }
+            camera.antiAliasingEnabled = true;
+            camera.blackboard = new Blackboard(samplingType, resolution);
+            return this;
+        }
+
+        /**
+         * Disable anti-aliasing
+         * @return Builder instance for chaining
+         */
+        public Builder disableAntiAliasing() {
+            camera.antiAliasingEnabled = false;
+            camera.blackboard = null;
+            return this;
+        }
+
         /**
          * Finalizes the camera construction after validation.
          *
@@ -284,9 +318,9 @@ public class Camera implements Cloneable {
                     !isZero(camera.vUp.length() - 1)) {
                 throw new IllegalArgumentException("The 3 vectors must be normalized");
             }
-            if(camera.Nx <= 0) throw new MissingResourceException(description, className, "nX");
-            if(camera.Ny <= 0) throw new MissingResourceException(description, className, "ny");
-            if(camera.rayTracer == null){
+            if (camera.Nx <= 0) throw new MissingResourceException(description, className, "nX");
+            if (camera.Ny <= 0) throw new MissingResourceException(description, className, "ny");
+            if (camera.rayTracer == null) {
                 camera.rayTracer = new SimpleRayTracer(null);
             }
 
@@ -296,5 +330,46 @@ public class Camera implements Cloneable {
                 throw new RuntimeException(exception);
             }
         }
+
+    }
+
+    public Ray constructRay(int i, int j, double offsetX, double offsetY) {
+        // Pixel dimensions
+        double rY = height / Ny;
+        double rX = width / Nx;
+
+        // Center of the view plane
+        Point pc = p0.add(vTo.scale(distance));
+
+        // Calculate pixel position with sub-pixel offset
+        double xJ = (j - (Nx - 1) / 2.0 + offsetX - 0.5) * rX;
+        double yI = -(i - (Ny - 1) / 2.0 + offsetY - 0.5) * rY;
+
+        Point pij = pc;
+        if (!isZero(xJ)) {
+            pij = pij.add(vRight.scale(xJ));
+        }
+        if (!isZero(yI)) {
+            pij = pij.add(vUp.scale(yI));
+        }
+
+        Vector Vij = pij.subtract(p0);
+        return new Ray(p0, Vij);
+    }
+
+    private void castRayWithAntiAliasing(int i,int j) {
+        List<Point2D> samples = blackboard.generateSamples();
+        Color accumulatedColor = Color.BLACK;
+
+        // Cast multiple rays per pixel and average the colors
+        for (Point2D sample : samples) {
+            Ray ray = constructRay( i,j,sample.getX(), sample.getY());
+            Color sampleColor = rayTracer.traceRay(ray);
+            accumulatedColor = accumulatedColor.add(sampleColor);
+        }
+
+        // Average the accumulated color
+        Color finalColor = accumulatedColor.scale((double) 1 /(samples.size()));
+        imageWriter.writePixel( j,i, finalColor);
     }
 }
