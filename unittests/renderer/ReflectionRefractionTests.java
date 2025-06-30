@@ -195,7 +195,6 @@ class ReflectionRefractionTests {
               .setDirection(new Point(0, -50, -150), Vector.AXIS_Y) // Pointing to scene center
               .setVpDistance(800).setVpSize(400, 400)
               .setResolution(1000, 1000)
-              .setAntiAliasing(SamplingType.GRID, 3) // Using jittered sampling for better quality
               .build()
               .renderImage()
               .writeToImage("enhancedHouseSceneWithAllEffects");
