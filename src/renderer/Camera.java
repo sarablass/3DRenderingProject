@@ -1,5 +1,7 @@
 package renderer;
 
+import renderer.PixelManager.Pixel;
+
 import static primitives.Util.isZero;
 
 import primitives.Color;
@@ -9,8 +11,10 @@ import primitives.Vector;
 import primitives.Point2D;
 import scene.Scene;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.MissingResourceException;
+import java.util.stream.IntStream;
 
 /**
  * The {@code Camera} class represents a virtual camera in 3D space,
@@ -31,10 +35,23 @@ public class Camera implements Cloneable {
     private boolean antiAliasingEnabled = false;
     private Blackboard blackboard;
 
+    // Adaptive Super Sampling fields
+    private boolean adaptiveSuperSamplingEnabled = false;
+    private int adaptiveSuperSamplingDepth = 0;
+    private double colorTolerance = 1.0;
+
+    // Multithreading fields
+    private int threadsCount = 0; // -2 auto, -1 range/stream, 0 no threads, 1+ number of threads
+    private static final int SPARE_THREADS = 2; // Spare threads if trying to use all the cores
+    private double printInterval = 0; // printing progress percentage interval (0 – no printing)
+    private PixelManager pixelManager; // pixel manager object
+
+
     /**
      * Private constructor to enforce the use of the Builder pattern.
      */
-    private Camera() {}
+    private Camera() {
+    }
 
     /**
      * Gets a new instance of the {@link Builder} to create a {@code Camera}.
@@ -74,30 +91,91 @@ public class Camera implements Cloneable {
         return new Ray(p0, pIJ.subtract(p0).normalize());
     }
 
-//    public Camera renderImage() {
-//        for (int i = 0; i < Nx; i++) {
-//            for (int j = 0; j < Ny; j++) {
-//                castRay(i, j);
-//            }
-//        }
-//        return this;
-//    }
-
+    /**
+     * This function renders image's pixel color map from the scene
+     * included in the ray tracer object
+     *
+     * @return the camera object itself
+     */
     public Camera renderImage() {
-        for (int i = 0; i < Ny; i++) {
-            for (int j = 0; j <Nx ; j++) {
-                if (antiAliasingEnabled && blackboard != null) {
-                    castRayWithAntiAliasing(i,j);
-                } else {
-                    castRay(i, j);
-                }
+        pixelManager = new PixelManager(Nx, Ny, printInterval);
+        return switch (threadsCount) {
+            case 0 -> renderImageNoThreads();
+            case -1 -> renderImageStream();
+            default -> renderImageRawThreads();
+        };
+    }
+
+    /**
+     * Render image using multi-threading by parallel streaming
+     *
+     * @return the camera object itself
+     */
+    private Camera renderImageStream() {
+        IntStream.range(0, Ny).parallel()
+                .forEach(i -> IntStream.range(0, Nx).parallel()
+                        .forEach(j -> castRay(j, i)));
+        return this;
+    }
+
+    /**
+     * Render image without multi-threading
+     *
+     * @return the camera object itself
+     */
+    private Camera renderImageNoThreads() {
+        for (int i = 0; i < Nx; i++) {
+            for (int j = 0; j < Ny; j++) {
+                castRay(j, i);
             }
         }
         return this;
     }
 
+    /**
+     * Renders the image using raw threads for explicit multithreading.
+     * This method creates a specified number of threads, each responsible for processing
+     * a subset of the pixels. The threads are managed manually, providing more control
+     * over resource allocation and execution.
+     *
+     * <p><b>Advantages:</b></p>
+     * <ul>
+     *     <li>Fine-grained control over thread management.</li>
+     *     <li>Can be optimized for specific hardware or workloads.</li>
+     * </ul>
+     *
+     * <p><b>Disadvantages:</b></p>
+     * <ul>
+     *     <li>Increased code complexity compared to parallel streams.</li>
+     *     <li>Requires careful handling of thread synchronization and resource sharing.</li>
+     * </ul>
+     *
+     * @return the camera object itself for method chaining
+     */
+    private Camera renderImageRawThreads() {
+        var threads = new LinkedList<Thread>();
+        while (threadsCount-- > 0)
+            threads.add(new Thread(() -> {
+                PixelManager.Pixel pixel;
+                while ((pixel = pixelManager.nextPixel()) != null)
+                    castRay(pixel.col(), pixel.row());
+            }));
+        for (var thread : threads) thread.start();
+        try {
+            for (var thread : threads) thread.join();
+        } catch (InterruptedException ignored) {}
+        return this;
+    }
 
-    public Camera printGrid(int interval, Color color) {
+
+    /**
+     * Prints a grid on the image with the specified interval and color.
+     *
+     * @param interval the interval at which to print the grid lines
+     * @param color    the color of the grid lines
+     * @return this Camera object
+     */
+     public Camera printGrid(int interval, Color color) {
         for (int i = 0; i < Nx; i++) {
             for (int j = 0; j < Ny; j++) {
                 if (i % interval == 0 || j % interval == 0) {
@@ -122,11 +200,126 @@ public class Camera implements Cloneable {
     /**
      * Writes the color to the pixel.
      */
-    private void castRay(int x, int y) {
-        Ray ray = constructRay(Nx, Ny, x, y);
-        Color color = rayTracer.traceRay(ray);
-        imageWriter.writePixel(x, y, color);
+    private void castRay(int i, int j) {
+        Color finalColor;
 
+        if (adaptiveSuperSamplingEnabled) {
+            // Use Adaptive Super Sampling
+            finalColor = castRayAdaptive(j, i, 0, 0, 0, 1, 1);
+        } else if (antiAliasingEnabled && blackboard != null) {
+            // Use regular Anti-Aliasing
+            List<Point2D> samples = blackboard.generateSamples();
+            Color accumulatedColor = Color.BLACK;
+
+            // Cast multiple rays per pixel and average the colors
+            for (Point2D sample : samples) {
+                Ray ray = constructRay(i, j, sample.getX(), sample.getY());
+                Color sampleColor = rayTracer.traceRay(ray);
+                accumulatedColor = accumulatedColor.add(sampleColor);
+            }
+
+            // Average the accumulated color
+            finalColor = accumulatedColor.scale((double) 1 / (samples.size()));
+        } else {
+            // Single ray
+            Ray ray = constructRay(Nx, Ny, j, i);
+            finalColor = rayTracer.traceRay(ray);
+        }
+
+        imageWriter.writePixel(j, i, finalColor);
+        if (pixelManager != null) {
+            pixelManager.pixelDone();
+        }
+    }
+
+    /**
+     * Recursively casts rays for adaptive super sampling to determine the color of a pixel.
+     * This method refines pixel sampling by dividing the pixel into sub-pixels and checking
+     * color similarity to decide whether further subdivision is needed.
+     *
+     * @param j              the column index of the pixel
+     * @param i              the row index of the pixel
+     * @param currentDepth   the current recursion depth
+     * @param subPixelX      the relative x-coordinate of the sub-pixel (0 to 1)
+     * @param subPixelY      the relative y-coordinate of the sub-pixel (0 to 1)
+     * @param subPixelWidth  the width of the sub-pixel
+     * @param subPixelHeight the height of the sub-pixel
+     * @return the color calculated for the pixel or sub-pixel
+     */
+    private Color castRayAdaptive(int j, int i, int currentDepth,
+                                  double subPixelX, double subPixelY,
+                                  double subPixelWidth, double subPixelHeight) {
+        if (currentDepth >= adaptiveSuperSamplingDepth) {
+            return sampleSubPixel(j, i, subPixelX + subPixelWidth / 2, subPixelY + subPixelHeight / 2);
+        }
+
+        Color topLeft = sampleSubPixel(j, i, subPixelX, subPixelY);
+        Color topRight = sampleSubPixel(j, i, subPixelX + subPixelWidth, subPixelY);
+        Color bottomLeft = sampleSubPixel(j, i, subPixelX, subPixelY + subPixelHeight);
+        Color bottomRight = sampleSubPixel(j, i, subPixelX + subPixelWidth, subPixelY + subPixelHeight);
+
+        if (colorsAreSimilar(topLeft, topRight, bottomLeft, bottomRight)) {
+            return topLeft.add(topRight).add(bottomLeft).add(bottomRight).scale(0.25);
+        }
+
+        double halfWidth = subPixelWidth / 2;
+        double halfHeight = subPixelHeight / 2;
+
+        Color sub1 = castRayAdaptive(j, i, currentDepth + 1, subPixelX, subPixelY, halfWidth, halfHeight);
+        Color sub2 = castRayAdaptive(j, i, currentDepth + 1, subPixelX + halfWidth, subPixelY, halfWidth, halfHeight);
+        Color sub3 = castRayAdaptive(j, i, currentDepth + 1, subPixelX, subPixelY + halfHeight, halfWidth, halfHeight);
+        Color sub4 = castRayAdaptive(j, i, currentDepth + 1, subPixelX + halfWidth, subPixelY + halfHeight, halfWidth, halfHeight);
+
+        return sub1.add(sub2).add(sub3).add(sub4).scale(0.25);
+    }
+
+    /**
+     * Samples the color of a sub-pixel at the specified coordinates.
+     * This method calculates the color by constructing a ray through the sub-pixel
+     * and tracing it using the ray tracer.
+     *
+     * @param j         the column index of the pixel
+     * @param i         the row index of the pixel
+     * @param subPixelX the relative x-coordinate within the pixel (0 to 1)
+     * @param subPixelY the relative y-coordinate within the pixel (0 to 1)
+     * @return the color sampled from the sub-pixel
+     */
+    private Color sampleSubPixel(int j, int i, double subPixelX, double subPixelY) {
+        double Ry = height / Ny;
+        double Rx = width / Nx;
+
+        double Yi = -(i - (Ny - 1) / 2d) * Ry;
+        double Xj = (j - (Nx - 1) / 2d) * Rx;
+
+        double offsetX = (subPixelX - 0.5) * Rx;
+        double offsetY = (subPixelY - 0.5) * Ry;
+
+        Point pIJ = p0.add(vTo.scale(distance));
+        if (!isZero(Xj + offsetX)) pIJ = pIJ.add(vRight.scale(Xj + offsetX));
+        if (!isZero(Yi + offsetY)) pIJ = pIJ.add(vUp.scale(Yi + offsetY));
+
+        Ray ray = new Ray(p0, pIJ.subtract(p0).normalize());
+        return rayTracer.traceRay(ray);
+    }
+
+    /**
+     * Checks if the given colors are similar based on the color distance.
+     * The method calculates the average color and compares the distance
+     * of each color to the average against the defined color threshold.
+     *
+     * @param c1 the first color
+     * @param c2 the second color
+     * @param c3 the third color
+     * @param c4 the fourth color
+     * @return true if all colors are similar, false otherwise
+     */
+    private boolean colorsAreSimilar(Color c1, Color c2, Color c3, Color c4) {
+        return c1.colorDistance(c2) < colorTolerance &&
+                c1.colorDistance(c3) < colorTolerance &&
+                c1.colorDistance(c4) < colorTolerance &&
+                c2.colorDistance(c3) < colorTolerance &&
+                c2.colorDistance(c4) < colorTolerance &&
+                c3.colorDistance(c4) < colorTolerance;
     }
 
     /**
@@ -240,6 +433,42 @@ public class Camera implements Cloneable {
         }
 
         /**
+         * Set multi-threading <br>
+         * Parameter value meaning:
+         * <ul>
+         * <li>-2 - number of threads is number of logical processors less 2</li>
+         * <li>-1 - stream processing parallelization (implicit multi-threading) is used</li>
+         * <li>0 - multi-threading is not activated</li>
+         * <li>1 and more - literally number of threads</li>
+         * </ul>
+         *
+         * @param threads number of threads
+         * @return builder object itself
+         */
+        public Builder setMultithreading(int threads) {
+            if (threads < -3)
+                throw new IllegalArgumentException("Multithreading parameter must be -2 or higher");
+            if (threads == -2) {
+                int cores = Runtime.getRuntime().availableProcessors() - SPARE_THREADS;
+                camera.threadsCount = cores <= 2 ? 1 : cores;
+            } else
+                camera.threadsCount = threads;
+            return this;
+        }
+
+        /**
+         * Set debug printing interval. If it's zero - there won't be printing at all
+         *
+         * @param interval printing interval in %
+         * @return builder object itself
+         */
+        public Builder setDebugPrint(double interval) {
+            if (interval < 0) throw new IllegalArgumentException("interval parameter must be non-negative");
+            camera.printInterval = interval;
+            return this;
+        }
+
+        /**
          * Sets the resolution of the camera.
          *
          * @param nX the number of pixels in the x direction
@@ -275,12 +504,42 @@ public class Camera implements Cloneable {
 
         /**
          * Disable anti-aliasing
+         *
          * @return Builder instance for chaining
          */
         public Builder disableAntiAliasing() {
             camera.antiAliasingEnabled = false;
             camera.blackboard = null;
             return this;
+        }
+
+        /**
+         * Enables adaptive super sampling for the camera and sets the depth and color threshold.
+         * Adaptive super sampling improves image quality by refining pixel sampling
+         * based on color differences within sub-pixels.
+         *
+         * @param depth     the maximum depth of adaptive sampling recursion
+         * @param threshold the color difference threshold for adaptive sampling
+         * @return the camera object itself for method chaining
+         */
+        public Builder setAdaptiveSuperSampling(int depth, double threshold) {
+
+            camera.adaptiveSuperSamplingEnabled = depth > 0;
+            camera.adaptiveSuperSamplingDepth = depth;
+            camera.colorTolerance = threshold;
+            return this;
+        }
+
+        /**
+         * Enables adaptive super sampling for the camera with a specified depth.
+         * Uses the default color difference threshold to refine pixel sampling
+         * and improve image quality.
+         *
+         * @param depth the maximum depth of adaptive sampling recursion
+         * @return the camera object itself for method chaining
+         */
+        public Builder setAdaptiveSuperSampling(int depth) {
+            return setAdaptiveSuperSampling(depth, camera.colorTolerance);
         }
 
         /**
@@ -333,6 +592,15 @@ public class Camera implements Cloneable {
 
     }
 
+    /**
+     * Constructs a ray from the camera through a sub-pixel position on the view plane.
+     *
+     * @param i       pixel row index
+     * @param j       pixel column index
+     * @param offsetX relative horizontal offset within the pixel (0 to 1)
+     * @param offsetY relative vertical offset within the pixel (0 to 1)
+     * @return        a ray passing through the specified sub-pixel point
+     */
     public Ray constructRay(int i, int j, double offsetX, double offsetY) {
         // Pixel dimensions
         double rY = height / Ny;
@@ -355,21 +623,5 @@ public class Camera implements Cloneable {
 
         Vector Vij = pij.subtract(p0);
         return new Ray(p0, Vij);
-    }
-
-    private void castRayWithAntiAliasing(int i,int j) {
-        List<Point2D> samples = blackboard.generateSamples();
-        Color accumulatedColor = Color.BLACK;
-
-        // Cast multiple rays per pixel and average the colors
-        for (Point2D sample : samples) {
-            Ray ray = constructRay( i,j,sample.getX(), sample.getY());
-            Color sampleColor = rayTracer.traceRay(ray);
-            accumulatedColor = accumulatedColor.add(sampleColor);
-        }
-
-        // Average the accumulated color
-        Color finalColor = accumulatedColor.scale((double) 1 /(samples.size()));
-        imageWriter.writePixel( j,i, finalColor);
     }
 }

@@ -113,4 +113,16 @@ public class Color {
 
    @Override
    public String toString() { return "rgb:" + rgb; }
+
+   /**
+    * Calculate the distance between this color and another color
+    * @param  otherColor the other color to compare with
+    * @return            the distance between the two colors, normalized to [0, 1]
+    */
+    public double colorDistance(Color otherColor) {
+      double dr = this.getColor().getRed() - otherColor.getColor().getRed();
+      double dg = this.getColor().getGreen() - otherColor.getColor().getGreen();
+      double db = this.getColor().getBlue() - otherColor.getColor().getBlue();
+      return Math.sqrt(dr * dr + dg * dg + db * db)/255.0;
+   }
 }
